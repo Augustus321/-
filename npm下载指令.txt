@@ -1,0 +1,19 @@
+sass
+	1¡¢npm install node-sass --save-dev
+	2¡¢npm install sass-loader --save-dev
+
+awesome-swiper
+	npm install swiper vue-awesome-swiper --save
+
+crypto
+	npm install crypto-js
+
+vant
+	//Vue 2
+	npm i vant -S
+	//Vue 3
+	npm i vant@next -S
+
+vue-baidu-map
+	npm install vue-baidu-map --save
+

@@ -1,0 +1,10 @@
+getPhoneNumber的e.detail出现的问题
+	errMsg（getPhoneNumber:fail no permission）
+	微信小程序未认证，认证后重新登录即可
+
+接口在调试环境下能正常访问，但是预览不行
+	要将接口域名添加到request域名里
+
+Error: 系统错误，错误码：80058,desc of scope.userLocation is empty
+	uniapp中设置了位置接口
+

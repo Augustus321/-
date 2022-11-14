@@ -1,0 +1,610 @@
+点击滚动到指定位置
+	uni.createSelectorQuery().select(".contenter").boundingClientRect(data=>{//最外层盒子节点
+				　　uni.createSelectorQuery().select(".yuyuearrive").boundingClientRect((res)=>{//目标节点
+				　　　　uni.pageScrollTo({
+				　　　　　　duration:0,//过渡时间必须为0，uniapp bug，否则运行到手机会报错
+				　　　　　　scrollTop:res.top - data.top,//滚动到实际距离是元素距离顶部的距离减去最外层盒子的滚动距离
+				　　　　})
+				　　}).exec()
+				}).exec();
+
+获取元素信息
+	uni.createSelectorQuery().selectAll('.add-head-img').boundingClientRect(function (rect) {
+					width = rect[0].width;
+					let widthb = 750 / Number(rect[0].width);
+					height = 336 / Number(widthb);
+				}).exec(function(res){
+					_this.height = height;
+				})
+	this.$nextTick(function() {}) //最好套在这里面
+
+placeholder相关问题
+	在uniapp中使用placeholder可以设置class设置样式，但在小程序中会失效，建议直接在标签上使用placeholder-style
+
+image相关问题
+	想要让image自适应可以在mode属性中设置相应值
+
+元素居中显示
+	有部分机型使用margin:auto;会失效，可以用flex使元素居中
+
+md5加密
+	npm下载md5在相应页面引入md5，使用方法：md5('xxxx'),大写：md5('xxxx').toUpperCase()
+
+后台获取元素
+	后台获取元素后可使用uParse，使用方法：github下载对应文件，放在components，并在相应页面引入并注册组件
+	<uParse :content="hangyeItem.ti" @preview="preview" @navigate="navigate" />
+	navigate(href, e) {},
+	uParse地址：https://github.com/gaoyia/parse/
+
+下拉框
+	uniapp中没有直接下拉的下来框，可以直接使用picker代替下拉框
+	<picker class="picker-box" @change="bindPickerChange" :range="array">
+		<view class="xuqiu-left-item-box">
+			<label class="left-title">需求类型：</label>
+			<label class="left-content">{{array[index]}}</label>
+		</view>
+	</picker>
+
+后台请求
+	uni.request({
+		header: {
+			'Content-Type': 'application/x-www-form-urlencoded'
+		},
+		url: '',
+		method: 'POST',
+		data: {},
+		dataType: 'json',
+		success: (res) => {},
+		fail: (res) => {}
+	});
+
+弹框
+	uni.showToast({
+		title: '信息提交成功',//弹框文本
+		icon: "none", //图标，默认成功
+		duration: 1000 //显示时长
+	})
+
+本地存储
+	uni.setStorage({
+		key: 'type',
+		data: {}
+	});
+
+获取本地存储
+	uni.getStorage({
+		key: 'type',
+		success: function(res) {},
+		fail:function(res){}
+	})
+
+获取顶部navigator的高度
+	状态栏高度
+	const SystemInfo = wx.getSystemInfoSync();
+      	this.statusBarHeight = SystemInfo.statusBarHeight;
+
+	navigator高度 = (胶囊顶部到状态栏顶部的距离 - 状态栏高度) * 2 + 胶囊高度; 
+	this.titleBarHeight = (uni.getMenuButtonBoundingClientRect().top - this.statusBarHeight) * 2 + uni.getMenuButtonBoundingClientRect().height;
+
+修改swiper指示点样式
+	.hot-swiper {
+	    /deep/ .uni-swiper-dots { // 指示点整个区域
+	        bottom: 100rpx;
+	    }
+	    /deep/ .uni-swiper-dot { // 指示点元素默认样式
+	        width: 12rpx!important;
+	        height: 12rpx!important;
+	        border: 1rpx solid #E0B079;
+	    }
+	    /deep/ .uni-swiper-dot-active { // 指示点元素激活（当前选中）状态样式
+	        background: #CD9763;
+	    }
+	}
+
+navigator标签传参
+	<navigator :url="'/url?id='+canshu">abc</navigator>
+
+全局变量
+	设置：
+	App.vue
+	export default {
+		globalData:{
+			url:'https://baidu.com'
+		}
+	}
+
+	获取：
+	let url = getApp().globalData.url
+
+	修改：
+	getApp().globalData.url = 'https://wangyi.com'
+
+获取当前页参数
+	页面中：
+	onLoad(option){
+		console.log(option.id)
+	}
+
+	js中：
+	/*获取当前路由*/
+	let curPage = getCurPage();
+	//在微信小程序或是app中，通过curPage.options；如果是H5，则需要curPage.$route.query（H5中的curPage.options为undefined，所以刚好就不需要条件编译了）
+	let curParam = curPage.options || curPage.$route.query;
+
+	export function getCurPage(){
+    		let pages = getCurrentPages();
+    		let curPage = pages[pages.length-1];
+    		return curPage
+	}
+
+判断是否为开发环境
+	if(process.env.NODE_ENV === 'development'){
+		getApp().globalData.url = 'https://localhost:44301'
+	}
+
+动态切换class
+	:class="[abc=='abc'?'qwer qqqq':'qqqq']"
+	:class="{'qwer':abc=='abc','qqqq':true}"
+	:class="['qwer',`signstyle-${abc}`]"
+
+滑到底部自动加载
+	onReachBottom(){} //uniapp提供的钩子函数
+
+分别处理h5和小程序样式
+	/* #ifdef MP */
+	.screen-list-page {
+		height:40px;
+	}
+	/* #endif */
+	/* #ifdef H5 */
+	/deep/.screen-list-page {
+		height:50px;
+	}
+	/* #endif */
+
+
+分享
+	 open-type="share"
+
+	onShareAppMessage: function(res) {
+			if (res.from === 'button') { // 来自页面内分享按钮
+				console.log(res.target)
+			}
+			var date1 = new Date()
+			var dateStr = this.dateToStr(date1)
+			var path = '/pages/index/index?fromid=' + this.vuex_user.userId + '&iid=' + this.vuex_user.userId +
+				'&idate=' + dateStr
+			console.log(path)
+			return {
+				title: '邀请你一起乖乖吃饭',
+				path: path,
+				imageUrl: 'https://gf.maitaowang.com/sldier/slider3.png'
+			}
+		},
+
+设置tabbar
+	"tabBar": {
+		"color": "#C0C4CC", //未选中的菜单文字颜色
+		"selectedColor": "#fa436a", //选中时的菜单文字颜色
+		"borderStyle": "black",
+		"backgroundColor": "#ffffff", //背景
+		"list": [{
+				"pagePath": "pages/index/index", //页面地址
+				"iconPath": "static/logo.png", //未选中时的图片
+				"selectedIconPath": "static/logo.png", //选中时的图片
+				"text": "首页" //菜单文字
+			},
+			{
+				"pagePath": "pages/home/index",
+				"iconPath": "static/logo.png",
+				"selectedIconPath": "static/logo.png",
+				"text": "首页"
+			}
+		]
+	}
+
+
+设置请求头的token
+	header:{token:token}
+
+想要设置页面高为100%
+	需要在APP.vue中设置 page{height:100% !important;}
+
+scroll-view
+	想要使用要设置滚动方向：scroll-y="true",并设置scroll-view的高
+
+上传文件
+	uni.uploadFile({
+		url: `${baseurl}/api/upload/up_img`, // 仅为示例，非真实的接口地址
+		filePath: url,
+		name: 'image',
+		fileType: 'image',
+		header: {
+			token: this.userinfo.token
+		},
+		formData：{}，
+		success: (res) => {
+			let result = JSON.parse(res.data)
+			if (result.code == 0) {
+				this.$refs.uToast.show({
+				message: result.msg,
+				type: 'error',
+				duration: 1000
+				})
+			} else {
+				resolve(result.data)
+			}
+			uni.hideLoading()
+		}
+	})
+	// 不要使用其他请求头，没有token就不用。name是参数名可以自定义名字，如果有其他参数可以放在formData里，filePath放文件地址.
+
+复制
+	uni.setClipboardData({
+		data:value,
+		success: () => {
+						
+		}
+	})
+
+自定义tabbar
+	在components新建tabbar.vue
+	<template>
+    	<view class="tab-bar">
+        <view v-for="(item,index) in list" :key="index" class="tab-bar-item" @click="switchTab(item, index)">
+            <image class="tab_img" :src="selected === index ? item.selectedIconPath : item.iconPath" mode="heightFix"></image>
+            <view class="tab_text" :style="{color: selected === index ? selectedColor : color}">{{item.text}}</view>
+        </view>
+		<view class="tab-line"></view>
+    </view>
+ 
+	</template>
+	<script>
+    export default {
+        props: {
+            selected: '',
+        },
+        data() {
+            return {
+                color: "#333333",
+                selectedColor: "#2a6fff",
+                list: [{
+                    pagePath: "/pages/index/index",
+                    iconPath: "/static/images/tab/order-icon.png",
+                    selectedIconPath: "/static/images/tab/order-icon-h.png",
+                    text: "订单"
+                }, {
+                    pagePath: "/pages/user/user",
+                    iconPath: "/static/images/tab/user-icon.png",
+                    selectedIconPath: "/static/images/tab/user-icon-h.png",
+                    text: "我的"
+                }]
+            }
+        },
+        methods: {
+            switchTab(item, index) {
+				if(this.selected == index) return
+                let url = item.pagePath;
+                uni.reLaunch({
+                	url
+                })
+            }
+        }
+    }
+	</script>
+ 
+	<style lang="scss">
+    .tab-bar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+		width: 100%;
+        height: 100rpx;
+        background: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding-bottom: env(safe-area-inset-bottom); // 适配iphoneX的底部
+        .tab-bar-item {
+            flex: 1;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+ 
+            .tab_img {
+                height: 35rpx;
+				margin-right: 10rpx;
+            }
+ 
+            .tab_text {
+                  font-size: 30rpx;
+                  font-family: "PingFang SC";
+                  color: rgb(0, 0, 0);
+            }
+        }
+		.tab-line{
+			width: 1px;
+			height: 60rpx;
+			background-color: #eaeaea;
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%,-50%);
+		}
+    }
+	</style>
+
+	在要使用的页面注册
+	import tabBar from '@/components/tabbar.vue'
+	components:{tabBar}
+	<tab-bar :selected="0"></tab-bar>
+
+小程序登录
+	可以使用uni.getUserProfile或uni.login再uni.getUserInfo
+	第一个只适用于微信小程序，如果多端使用建议用第二种方法进行登录
+	
+获取手机号
+	现在微信小程序不需要uni.login后再获取，但需要把方法写在button上；抖音小程序需要uni.login后再获取，并且button文字必须为“授权登录”等
+	<button open-type="getPhoneNumber" @getphonenumber="getPhoneNumber"></button>
+	getPhoneNumber(e){console.log(e.detail)}
+
+url转码
+	encodeURIComponent
+	decodeURIComponent
+
+滚动时头部渐变
+	onPageScroll(e) {
+		this.handleScroll(e.scrollTop)
+	},
+	// 导航栏滚动显示/隐藏
+	handleScroll(top) {
+		if (top > 90) {
+			let opacity = top / 300
+			opacity = opacity > 1 ? 1 : opacity
+			this.styleObject = opacity
+		}
+	}
+
+
+伪类的使用
+	当父元素中包含其他不是同一个class的元素时，使用:last-child会失效，要使用:last-of-type
+
+图片地址有时存在无法引用的情况
+	要在地址前加上 https://images.weserv.nl/?url=h5.doulaoer.com    //url后不要加http
+
+苹果x下面有个横条
+	padding-bottom: env(safe-area-inset-bottom);
+
+小程序保存图片
+	// 小程序保存图片
+    savePosterPath(url) {
+      uni.downloadFile({
+        url,
+        success: (resFile) => {
+          console.log(resFile, "resFile");
+          if (resFile.statusCode === 200) {
+            uni.getSetting({
+              success: (res) => {
+                if (!res.authSetting["scope.writePhotosAlbum"]) {
+                  uni.authorize({
+                    scope: "scope.writePhotosAlbum",
+                    success: () => {
+                      uni.saveImageToPhotosAlbum({
+                        filePath: resFile.tempFilePath,
+                        success: (res) => {
+                          return uni.showToast({
+                            title: "保存成功！",
+                          });
+                        },
+                        fail: (res) => {
+                          return uni.showToast({
+                            title: res.errMsg,
+                          });
+                        },
+                        complete: (res) => {},
+                      });
+                    },
+                    fail: () => {
+                      uni.showModal({
+                        title: "您已拒绝获取相册权限",
+                        content: "是否进入权限管理，调整授权？",
+                        success: (res) => {
+                          if (res.confirm) {
+                            uni.openSetting({
+                              success: (res) => {
+                                console.log(res.authSetting);
+                              },
+                            });
+                          } else if (res.cancel) {
+                            return uni.showToast({
+                              title: "已取消！",
+                            });
+                          }
+                        },
+                      });
+                    },
+                  });
+                } else {
+                  uni.saveImageToPhotosAlbum({
+                    filePath: resFile.tempFilePath,
+                    success: (res) => {
+                      return uni.showToast({
+                        title: "保存成功！",
+                      });
+                    },
+                    fail: (res) => {
+                      return uni.showToast({
+                        title: res.errMsg,
+                      });
+                    },
+                    complete: (res) => {},
+                  });
+                }
+              },
+              fail: (res) => {},
+            });
+          } else {
+            return uni.showToast({
+              title: resFile.errMsg,
+            });
+          }
+        },
+        fail: (res) => {
+          return uni.showToast({
+            title: res.errMsg,
+          });
+        },
+      });
+    },
+
+	注：抖音小程序判断能否保存到相册的返回值是scope.album
+
+APP保存图片
+	// APP保存图片
+    savePhoto(url) {
+      // 先下载图片
+      uni.downloadFile({
+        url,
+        success: (res) => {
+          // 获取到图片本地地址后再保存图片到相册（因为此方法不支持远程地址）
+          uni.saveImageToPhotosAlbum({
+            filePath: res.tempFilePath,
+            success: () => {
+              uni.showToast({
+                title: "保存成功！",
+              });
+            },
+            fail: () => {
+              uni.showToast({
+                title: "保存失败",
+              });
+            },
+          });
+        },
+      });
+    },
+
+在服务器加小程序referer
+	微信：*.servicewechat.com  和  servicewechat.com
+	抖音：tmaservice.developer.toutiao.com 和 *.developer.toutiao.com
+
+app中设置状态栏高度
+	height: var(--status-bar-height);
+
+阻止冒泡
+	@click.stop
+
+async await用法
+	methods里
+		async getInfo() {
+				await this.isLogin();
+				// 信息
+				uni.request({
+					url: `${this.baseurl}/api/goods/goods_detail`,
+					header: {
+						'token': this.token
+					},
+					method: 'POST',
+					dataType: 'json',
+					data: {
+						goods_id: this.id
+					},
+					success: (res) => {
+						this.fdata = res.data.data
+						this.shop = res.data.data.shop
+						if(res.data.data.is_collection == 1){
+							this.isCollect = true
+						}else{
+							this.isCollect = false
+						}
+					}
+				})
+			},
+			// 判断是否登录
+			isLogin() {
+				return new Promise((resolve,reject) => {
+					let that = this
+					uni.getStorage({
+						key: 'user',
+						success: function(res) {
+							that.hasUser = true
+							that.token = res.data.userinfo.token
+							resolve('suc')
+						},
+						fail: function(res) {
+							that.hasUser = false
+							resolve('err')
+						}
+					})
+				})
+			},
+
+	onLoad里
+		this.getInfo()
+
+点击按钮分享
+	template: 
+	<button open-type="share">
+	export default {
+  		onShareAppMessage(res) {
+    			if (res.from === 'button') {// 来自页面内分享按钮
+      				console.log(res.target)
+    			}
+    			return {
+      				title: '自定义分享标题',
+      				path: '/pages/test/test?id=123'
+    			}
+  		}
+	}
+
+设置上一页data里的值
+	let pages = getCurrentPages()
+		let prePage = pages[pages.length - 2]
+		prePage.$vm.needRefresh = true
+
+返回上一页并刷新
+	当前页：
+	setTimeout(() => {
+		let pages = getCurrentPages()
+		let prePage = pages[pages.length - 2]
+		prePage.$vm.needRefresh = true
+		uni.navigateBack()
+	},1000)
+	上一页：
+	if (this.needRefresh) {
+		console.log('hh')
+	}
+
+提示
+	uni.showModal({
+	title: '提示',
+	content: '这是一个模态弹窗',
+	success: function (res) {
+		if (res.confirm) {
+			console.log('用户点击确定');
+		} else if (res.cancel) {
+			console.log('用户点击取消');
+		}
+	}
+	});
+
+修改navigationBarTitleText
+	uni.setNavigationBarTitle({
+   		title: 'xx'
+	});
+
+预览、长按识别
+	点开预览后才能使用长按识别功能
+	uni.previewImage({
+		current: 0,
+		urls: [that.wxData.image],
+		showmenu: true,
+		longPressActions: {
+			itemList: ['发送给朋友', '保存图片', '收藏', '识别二维码'],
+			success: function(data) {},
+			fail: function(err) {}
+		}
+	});
+

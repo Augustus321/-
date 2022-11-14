@@ -1,0 +1,365 @@
+操作元素data
+	获取
+	var a = $(this).data('name')
+	赋值
+	$(this).data('name','data')
+	此时html代码中data的值仍然是之前的，但jquery获取data的值是修改过后的
+
+操作元素class
+	添加class
+	$(this).addClass('a')
+	删除class
+	$(this).removeClass('a')
+
+操作元素并修改其他同类名的元素
+	$(this).addClass('active').siblings().removeClass('active')
+
+删除元素
+	删除该元素及其子元素
+	$(this).remove();
+	删除该元素的子元素
+	$(this).empty();
+	删除特定的元素
+	$('p').remove('.italic') //删除class为italic的所有p元素
+
+获取第一个子元素并添加class
+	$(this).find('li').first().addClass('active')
+         
+获取屏幕信息
+	浏览器可视区域高度
+	$(window).height()
+	窗口文档的高度
+	$(document).height()
+	body高度
+	$(document.body).height()
+	body总高度 包括border padding margin
+	$(document.body).outerHeight(true)
+	//获取宽度只需将height替换为width即可
+
+css方法
+	返回css属性值
+	css('属性名')
+	返回首个匹配元素
+	$('p').css('属性名')
+	设置css属性
+	css('属性名','值')
+	设置多个css属性
+	css({'属性名':'值','属性名':'值'})
+
+设置内容
+	设置或返回所选元素的文本内容
+	text()
+	设置或返回所选元素的内容
+	html()
+	设置或返回表单字段的值
+	val()
+
+监听input实时输入
+	$(".search-input").bind('input propertychange', function() {
+        		var a = $(".search-input").val();
+        	})
+
+删除字符串开始和末尾的空格
+	$.trim()
+
+过滤元素字符串
+	$(this).hide().filter(":contains('"+a+"')").show()
+
+清空输入框的值
+	$(this).val('')
+
+元素查找
+	查找父节点
+	$(this).parent(a) || $(this).parent()
+	查找所有祖先元素
+	$(this).parents(a) || $(this).parents()
+	查找所有子节点,不会返回孙节点
+	$(this).chidren()
+	返回下面的所有内容，包括节点和文本，和children的区别在于包括空白文本，也会被作为一个
+	$(this).contents()
+	返回上一个兄弟节点
+	$(this).prev()
+	返回所有之前的兄弟节点
+	$(this).prevAll()
+	返回下一个兄弟节点
+	$(this).next()
+	返回所有之后的兄弟节点
+	$(this).nextAll()
+	返回兄弟姐妹节点，不分前后
+	$(this).siblings()
+
+判断元素是否含有class
+	is('.class')
+	hasClass('class')
+	//低版本可能是hasClass('.class')
+
+下拉动画
+	$(this).slideUp(100)
+	$(this).slideDown(100)
+	$(this).slideToggle(100)
+
+操作storage
+	获取键值
+	window.localStorage.getItem('key') 或 window.localStorage.keyName
+	设置键值
+	window.localStorage.setItem('key','value') 或 window.localStorage.keyName = 'value'
+	清楚键值
+	window.localStorage.removeItem('key')
+	清楚所有键值
+	window.localStorage.clear()
+	
+切换
+	$(this).toggle()
+
+删除对象键值
+	delect a.key
+
+动态元素绑定事件
+	$(this).on('click','.class',function(){})
+
+元素信息
+	元素的高度
+	$(this).height()
+	1 height()         高度为 height ,
+	2 innerHeight()    高度为 height+padding ,
+	3 outerHeight()    高度为 height+padding+border ,
+	4 outerHeight(true)高度为 height+margin+padding+border ;
+	元素距离顶部
+	$(this).offset().top
+	滚动条高度
+	$(document).scrollTop()
+
+监听浏览器窗口变化
+	$(window).resize(function(){})
+
+阻止事件冒泡
+	$(this).on('click',function(event){
+	event.stopPropagation() //阻止事件冒泡
+	})
+
+ajax请求
+	请求类型:
+		application/x-www-form-urlencoded;charset=UTF-8//form表单类型
+	$(function(){
+        	//请求参数
+        	var list = {};
+        	//
+        	$.ajax({
+            		//请求方式
+            		type : "POST",
+            		//请求的媒体类型
+            		contentType: "application/json;charset=UTF-8",
+            		//请求地址
+            		url : "http://127.0.0.1/admin/list/",
+            		//数据，json字符串
+            		data : JSON.stringify(list),
+            		//请求成功
+            		success : function(result) {
+                		console.log(result);
+            		},
+            		//请求失败，包含具体的错误信息
+            		error : function(e){
+                		console.log(e.status);
+                		console.log(e.responseText);
+            		}
+        	});
+	});
+	get请求：
+		$.get("demo_ajax_load.txt", function(result){
+    			$("div").html(result);
+  		});
+
+兄弟元素的index
+	$(this).index() 可以返回该元素在同父级的兄弟元素中的下标
+
+通过元素文本获取该元素并进行操作
+	$(':contains(text)')
+
+通过元素data属性获取该元素
+	$('[data-index="'+xleft+'"]')
+
+获取和修改图片src
+	获取
+	$(this)[0].src
+	修改
+	$(this).attr('src',path)
+
+input checked
+	获取
+	$(input[type=radio]:checked).val()
+	设置
+	$("#id").prop("checked",true)
+	checked设置直接点击
+
+遍历子元素
+	$(this div).each(function(){})
+
+获取子元素个数
+	$(this).children().length
+
+以js原生对象操作节点
+	$(this).prop()
+	如：$(this).prop('outerHTML')
+
+鼠标事件
+	//左键点击
+	click
+	//左键双击
+	dblclick
+	//敲击鼠标键时触发
+	mousedown
+	//松开鼠标时触发
+	mouseup
+	//鼠标从一个元素移动到另一个元素上时触发，如果需要知道来自那个元素可以使用, relatedTagrget属性
+	mouseover
+	//鼠标移出一个元素，包括从父元素移动到子元素上，或者使用键盘跳到元素上
+	mouseout
+	//光标进入元素上时触发
+	mouseenter
+	//光标离开元素时触发
+	mouseleaver
+	//光标进入和离开可以使用hover这个函数来代替
+	$(this).hover(function(){},function(){})
+
+点击复制文本
+	var num = $(this).text() //获取需要复制的内容
+	var $temp = $("<input>");
+        	$("body").append($temp);
+        	$temp.val(num).select();
+        	document.execCommand("copy");
+        	$temp.remove();
+
+按回车触发点击事件
+	$(document).keydown(function(event) {
+        		if (event.keyCode == 13) {
+			//event.keyCode == 13     13为回车keyCode
+                  		$("#Btn_Login").click();//登录事件
+       		 }
+   	 });
+
+jquery操作cookie
+	引入cookie
+	<script src="//cdn.bootcss.com/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+	设置cookie
+		设置一个值为'dumplings'的cookie
+		$.cookie('name','dumplings');
+		设置为7天，默认值：浏览器关闭
+		$.cookie('key','value',{expires:7})
+		设置一个值为'dumplings'的在域名'qq.com'的cookie
+		$.cookie('name','dumplings',{domain:'qq.com'})
+		设置cookie的路径
+		$.cookie{'name','dumplings',{domain:'qq.com',path:'/'})
+	删除cookie
+		path为指定路径，直接删除该路径下的cookie
+		$.removeCookie('name',{path:'/'})
+		将cookie名为'openid'的值设置为空，实际已删除
+		$.cookie('name',null,'{path:'/'})
+	获取cookie
+	$.cookie('name')
+
+操作元素属性内容
+	$(this).attr("href","aaaa")
+	$(this).attr("src","sssasd")
+
+输入框输入限制
+	禁止输入数字外的字符
+	$(this).val($(this).val().replace(/\D/g,''))
+	禁止输入数字和小数点外的字符
+	 $(this).val($(this).val().replace(/[^0-9.]/g,''))
+
+	只能输入最多两位小数的数字
+	val = val.replace(/[^\d.]/g, ""); //清除"数字"和"."以外的字符
+        	val = val.replace(/^\./g, ""); //验证第一个字符是数字
+        	val = val.replace(/\.{2,}/g, "."); //只保留第一个, 清除多余的
+        	val = val.replace(".", "$#$").replace(/\./g, "").replace("$#$", ".");
+        	val = val.replace(/^(\-)*(\d+)\.(\d\d).*$/, '$1$2.$3'); //只能输入两个小数
+
+	//允许输入负数
+	var isfu = val.charAt(0)
+	if (isfu == '-') {
+                val = '-'+val
+            }
+
+通过键值查找数组中的对象
+	var id = content.data('id')
+        	var result = $.grep(data, function (e) {
+            		return e.Id == id;
+        	});
+禁用和取消禁用
+	$("#select").attr("disabled","disabled"); 
+	$("#select").removeAttr("disabled");  
+
+获取文本除关键字外的字符串
+	var val = $(this).data('value')
+        	var valnum = val.indexOf("_");
+        	var left = val.substr(0, valnum)
+        	var right = val.substr(valnum + 1)
+
+判断元素是否存在
+	if($('.aaa') > 0)
+
+添加元素
+	var html = "你想填的东西";
+	$("选择器").before(html);
+	append() - 在被选元素的结尾插入内容
+	prepend() - 在被选元素的开头插入内容
+	after() - 在被选元素之后插入内容
+	before() - 在被选元素之前插入内容
+
+监听变化
+	$(this).change(function(){})
+
+动态创建form表单post提交
+	$.extend({
+    		PostSubmitForm: function (url, args) {
+        		var body = $(document.body),
+              			form = $("<form method='post' style='display:none'></form>"),
+           			input;
+        		form.attr({ "action": url });
+        		$.each(args, function (key, value) {
+            			input = $("<input type='hidden'>");
+            			input.attr({ "name": key });
+            			input.val(value);
+            			form.append(input);
+        		});
+
+        		//IE低版本和火狐下
+        		form.appendTo(document.body);
+        		form.submit();
+        		document.body.removeChild(form[0]);
+    		}
+	});
+	在其他地方可以直接使用$.PostSubmitForm()来调用此方法
+//示例
+$.PostSubmitForm('url', { data1:'1',data2:'2' })
+
+解除和重新绑定事件
+	解除
+	$(this).off('click')
+	绑定
+	$(this).on('click',fnc())
+
+使元素自动滚动
+	$(document).scrollTop($(document).height());
+
+jquery对象转换为dom对象
+	$('#aa')为jquery对象
+	$('#aa')[0]为dom对象,和document.getElementById('aa')
+
+jquery拦截器(拦截ajax请求并进行操作)
+	$(document).ajaxStart(function () {
+    		//ajax开始
+	}).ajaxStop(function () {
+    		//ajax结束
+	})
+
+监听页面滚动
+	$(document).scroll(function(){
+		var scroH = $(document).scrollTop() //滚动高度
+		var contentH = $(document).height() //内容高度
+		var viewH = $(window).height() //可见高度
+	})
+
+自动触发事件
+	$('a').first().trigger("click");
+

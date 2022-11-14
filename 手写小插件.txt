@@ -1,0 +1,33 @@
+// 设置成交快报高度
+  var height = $('.bargain-ul li').innerHeight()
+  $('.bargain-box').height(height)
+  //设置轮播
+  // 将第一个元素复制到最后一个
+  var text = $('.bargain-ul li:first-child').text()
+  $('.bargain-ul').append('<li>' + text + '</li>')
+  var length = $('.bargain-ul').children().length
+  var trans = 0
+  setInterval(function () {
+    trans += height
+    if (trans == height * length) {
+      
+        trans = 0
+        $('.bargain-ul').css({
+          'transform': 'translateY(-' + trans + 'px)',
+          'transition': 'all 0s linear'
+        })
+        trans = height
+      var litime = setTimeout(function () {
+      $('.bargain-ul').css({
+        'transform': 'translateY(-' + trans + 'px)',
+        'transition': 'transform .5s linear'
+      })
+      clearTimeout(litime)
+      }, 1)
+    }else{
+      $('.bargain-ul').css({
+        'transform': 'translateY(-' + trans + 'px)',
+        'transition': 'transform .5s linear'
+      })
+    }
+  }, 1000)
