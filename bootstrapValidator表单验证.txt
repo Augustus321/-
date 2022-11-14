@@ -1,0 +1,150 @@
+需要引入文件
+<link href="Styles/bootstrap.css" rel="stylesheet" />
+<link href="Styles/bootstrapValidator.css" rel="stylesheet" />
+<script src="Scripts/jquery-1.10.2.min.js"></script>
+<script src="Scripts/bootstrap.min.js"></script>
+<script src="Scripts/bootstrapValidator.js"></script>
+
+
+$('#defaultForm').bootstrapValidator({
+        message: 'This value is not valid',
+        //feedbackIcons: {
+        //    valid: 'glyphicon glyphicon-ok',
+        //    invalid: 'glyphicon glyphicon-remove',
+        //    validating: 'glyphicon glyphicon-refresh'
+        //},
+        fields: {
+            inputMiOne: {
+                message: '密码输入无效',
+                validators: {
+                    notEmpty: {
+                        message: '密码不能为空'
+                    },
+                    stringLength: {
+                        min: 6,
+                        max: 20,
+                        message: '密码字符数必须在6-20之间'
+                    },
+                    different: {//不能和用户名相同
+                        field: 'inputPerson',
+                        message: '不能和用户名相同'
+                    },
+                    regexp: {
+                        regexp: /^[a-zA-Z0-9_\.]+$/,
+                        message: '密码只能由字母、数字、点和下划线组成'
+                    }
+                }
+            },
+            inputMiTwo: {
+                message: '密码输入无效',
+                validators: {
+                    notEmpty: {
+                        message: '请再次输入密码'
+                    },
+                    stringLength: {
+                        min: 6,
+                        max: 20,
+                        message: '密码字符数必须在6-20之间'
+                    },
+                    identical: {//相同
+                        field: 'inputMiOne',
+                        message: '两次密码输入不一致'
+                    },
+                    regexp: {
+                        regexp: /^[a-zA-Z0-9_\.]+$/,
+                        message: '密码只能由字母、数字、点和下划线组成'
+                    }
+                }
+            },
+            inputPhone: {
+                message: '手机号码输入无效',
+                validators: {
+                    notEmpty: {
+                        message: '请输入手机号码'
+                    },
+                    regexp: {
+                        regexp: /^1\d{10}$/,
+                        message: '请输入正确的手机号码'
+                    }
+                }
+            },
+            inputpartner: {
+                enabled: false
+            },
+            recode: {
+                message: '验证码输入无效',
+                validators: {
+                    notEmpty: {
+                        message: '验证码不能为空'
+                    }
+                }
+            },
+            phonecode: {
+                message: '手机验证码输入无效',
+                validators: {
+                    notEmpty: {
+                        message: '验证码不能为空'
+                    }
+                }
+            }
+        }
+    });
+
+    //提交表单数据,手动验证表单
+    $('#regnow').click(function (event) {
+        /* Act on the event */
+        /*手动验证表单，当是普通按钮时。*/
+        $('#defaultForm').data('bootstrapValidator').validate();//启用验证
+        var flag = $('#defaultForm').data('bootstrapValidator').isValid()//验证是否通过true/false
+        console.log(flag)
+        if (flag) {
+            //获取表单数据
+            var formData = { 'Mobile': $('input[name = "inputPhone"]').val(), 'Code': $('input[name = "phonecode"]').val(), 'Password': $('input[name = "inputMiTwo"]').val() }
+            $.ajax({
+                url: '/api/Shouzhi/MyShouzhi',
+                type: "post",
+                data: formData,
+                success: function (data) {
+                    console.log(data)
+                },
+                error: function (e) {
+                    alert("错误！！");
+                }
+            });
+        }
+    })
+
+	$('#defaultForm').bootstrapValidator.on('https://www.taopuwang.com/member/success.form.bv', function (e) {
+        // Prevent form submission
+        e.preventDefault();
+
+        // Get the form instance
+        var $form = $(e.target);
+
+        // Get the BootstrapValidator instance
+        var bv = $form.data('bootstrapValidator');
+        // Use Ajax to submit form data
+        $.post('https://www.taopuwang.com/ajax/Register.ashx?Type=SubmitData', $form.serialize(), function (result) {
+            if (parseInt(result) == 1) {
+                //alert("恭喜，注册成功");
+                $(".bd-one").hide();
+                $(".bd-three").show();
+                $(".jd3").addClass("bg");
+            } else if (parseInt(result) == 2) {
+                alert("注册失败，请联系业务员");
+            }
+            else if (parseInt(result) == 3) {
+                alert("用户名或手机号码已存在");
+            }
+            else if (parseInt(result) == 4) {
+                alert("注册失败,用户名存在非法字符或字符串");
+            }
+            else if (parseInt(result) == 6 || parseInt(result) == 7) {
+                alert("验证码错误");
+            } else {
+                alert("未知错误");
+            }
+        }, 'json');
+   
+    });
+

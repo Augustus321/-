@@ -1,0 +1,7 @@
+弹窗
+	layui.use('layer', function () {
+                var layer = layui.layer;
+                layer.alert('当前账户已经是默认账户！')//弹窗需要确认
+		layer.msg('啊实打实大撒大声地')//弹窗不需要确认
+            })
+

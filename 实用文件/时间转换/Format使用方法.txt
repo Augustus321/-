@@ -1,0 +1,6 @@
+if (v1) {
+   v1 = GetDateFormat(v1)
+   v1 = new Date(v1.replace(/-/g,'/'));
+   StrDate = Format(v1, "yyyy-MM-dd");
+}
+

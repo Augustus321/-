@@ -1,0 +1,3 @@
+uniapp中实现app内使用支付
+	通过后台，获取订单对象——时间戳timeStamp、随机字符串nonceStr、统一下单接口返回的prepay_id、签名方式signType、签名内容paySign等
+	用uni.requestPayment唤起支付，传递以上参数，再加一个provider:'wxpay / alipay'

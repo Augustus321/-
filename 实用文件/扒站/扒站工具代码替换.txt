@@ -1,0 +1,10 @@
+ tppabs=".*?"
+
+/\*tpa=.*?\*/
+
+  \\n.*Teleport Ultra.*window.location='.*?'
+
+javascript:if\(confirm\('
+
+htm"  --  html"
+

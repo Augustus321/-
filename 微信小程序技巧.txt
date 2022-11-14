@@ -1,0 +1,15 @@
+微信小程序目前不支持使用getuserinfo来获取用户信息
+	需使用wx.getUserProfile来获取
+
+微信小程序获取手机号之前需先调用wx.login的接口
+
+小程序button有边框
+	使用button::after{border:none;}
+
+预览、长按识别
+	点开预览后才能使用长按识别功能
+	wx.previewImage({
+		current: 0, // 当前显示图片的http链接
+		urls: [that.wxData.image] // 需要预览的图片http链接列表
+	})
+

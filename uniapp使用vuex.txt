@@ -1,0 +1,195 @@
+引入persistedstate   npm install --save vuex-persistedstate
+
+在项目的根目录下新建一个store文件夹，然后在文件夹下新建一个index.js文件
+	//引入vue和vuex
+	import Vue from 'vue'
+	import Vuex from 'vuex'
+	import createPersistedState from 'vuex-persistedstate'
+	Vue.use(Vuex)
+
+	const vuexPersisted = new createPersistedState({
+		storge:{
+			getItem: key => uni.getStorageSync(key),
+			setItem: (key,value) => uni.setStorageSync(key,value),
+			removeItem: key => uni.removeStorageSync(key)
+		}
+	})
+	const store = new Vuex.Store({ //全局变量定义
+		state: {
+			forcedLogin: false, //是否需要强制登录
+			hasLogin: false,
+			userinfo:'',
+		},
+		mutations: {
+			login(state, user) {
+				state.hasLogin = true;
+				state.userinfo = user || '';
+			},
+			logout(state) {
+				state.hasLogin = false;
+				state.userinfo = '';
+			},
+			forced(state,boolean){
+				state.forcedLogin = boolean
+			}
+		},
+		plugins:[vuexPersisted]
+	})
+	export default store
+
+在main注册
+	import store from './store'
+	Vue.prototype.$store = store
+	const app = new Vue（{
+		...App,
+		store
+	})
+
+在页面中使用
+	import { mapState,mapMutations } from 'vuex'
+
+	computed:mapState(['aa'] //使用存储的变量
+	methods:{...mapMutations(['bc'])} //使用mutations的方法
+
+	this.aa   this.bc()
+
+
+
+登录案例
+	store/index.js
+	//引入vue和vuex
+	import Vue from 'vue'
+	import Vuex from 'vuex'
+	import createPersistedState from 'vuex-persistedstate'
+	Vue.use(Vuex)
+
+	const vuexPersisted = new createPersistedState({
+		storge:{
+			getItem: key => uni.getStorageSync(key),
+			setItem: (key,value) => uni.setStorageSync(key,value),
+			removeItem: key => uni.removeStorageSync(key)
+		}
+	})
+	const store = new Vuex.Store({ //全局变量定义
+		state: {
+			forcedLogin: false, //是否需要强制登录
+			hasLogin: false,
+			userinfo:'',
+		},
+		mutations: {
+			login(state, user) {
+				state.hasLogin = true;
+				state.userinfo = user || '';
+			},
+			logout(state) {
+				state.hasLogin = false;
+				state.userinfo = '';
+			},
+			forced(state,boolean){
+				state.forcedLogin = boolean
+			}
+		},
+		plugins:[vuexPersisted]
+	})
+	export default store
+
+	main.js
+	import store from './store'
+	Vue.prototype.$store = store
+	Vue.prototpye.isLogin = function(hasforced){
+		if(!store.state.hasLogin){
+			//判断是否需要强制登录，是need，否noneed
+			if(hasforced == 'need'){
+				store.commit('forced', false)
+			}else{
+				store.commit('forced', true)
+			}
+			uni.showModal({
+				title:'未登录',
+				content:'您未登录，需要登录后才能继续',
+				showCancel:store.state.forcedLogin,
+				success: (res) => {
+					if(res.confirm){
+						if(!store.state.forcedLogin){
+							uni.reLaunch({
+								url:'/pages/login/login'
+							})
+						} else {
+							uni.navigateTo({
+								url:'/pages/login/login'
+							})
+						}
+					}
+				}
+			})
+		}
+	}
+
+	const app = new Vue（{
+		...App,
+		store
+	})
+
+	index.vue
+	import { mapState,mapMutations } from 'vuex'
+
+	computed:mapState(['aa'] //使用存储的变量
+	methods:{...mapMutations(['bc'])} //使用mutations的方法
+
+	// 判断登录
+	if (this.isLogin('need') && JSON.stringify(this.userinfo) != '{}') {
+		this.getInfo()
+	}
+
+	login.vue
+	uni.request({
+		url: baseurl + '/api/user/mobilelogin',
+		method: 'POST',
+		header: {
+			"Content-Type": "application/json"
+		},
+		data: {
+			mobile: phone,
+			captcha: code
+		},
+		success: (res) => {
+			uni.hideLoading()
+			const result = res.data
+			if (result.code == 0) {
+				this.$refs.uToast.show({
+					message: result.msg,
+					type: 'error',
+					duration: 1000
+				})
+			} else if (result.code == 1) {
+				this.$refs.uToast.show({
+					message: result.msg,
+					type: 'success',
+					duration: 1000
+				})
+				this.login(result.data.userinfo);
+				if (!this.forcedLogin) {
+					uni.reLaunch({
+						url: '/pages/index/index'
+					})
+				} else {
+					uni.navigateBack()
+				}
+			}
+		}
+	})
+
+
+
+使用persistedstate时转小程序会出现报错
+	可以引入 npm i mp-storage --save
+	直接将plugins改成下面代码
+	plugins: [
+	    createPersistedState({
+	      storage: localStorage
+	    })
+	  ]
+
+在方法里修改数组无法动态更新
+	要使用$set
+	this.$set(arr,index,value)

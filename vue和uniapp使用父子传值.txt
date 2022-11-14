@@ -1,0 +1,153 @@
+一、父组件传子组件，核心--props
+
+在这里触发 handleClick 点击事件，额外声明一个clickData，点击按钮将 inpMessage 的值赋给 clickData ，再传给子组件
+
+父组件index.vue
+
+<template>
+	<div>
+		<input type="text" v-model="inpMessage">
+		<button @click="handleClick">点击传给子组件</button>
+		<children :message="clickData" /> //message为子组件props接收的值，clickData为父组件要传的值
+	</div>
+</template>
+
+<script>
+	import children from './page/children'
+	export default {
+		name: "index",
+		components:{
+			children
+		},
+		data(){
+			return{
+				inpMessage:'',
+				clickData:''
+			}
+		},
+		methods:{
+			handleClick(){
+				//赋值
+				this.clickData = this.inpMessage
+			},
+		}
+	}
+</script>
+
+子组件代码：watch监听法
+
+<template>
+	<div>
+		<input type="text" v-model="childrenMessage">
+		<!--<button @click="childClick">传值给父组件</button>-->
+	</div>
+</template>
+
+<script>
+	export default {
+		name: "children",
+		props:{
+			message:String
+		},
+		data(){
+			return{
+				childrenMessage:''
+			}
+		},
+		created(){
+			this.childrenMessage=this.message
+		},
+
+		//这里用watch方法来监听父组件传过来的值，来实现实时更新
+		watch:{
+			message(val){ //message即为父组件的值，val参数为值
+				this.childrenMessage = val //将父组件的值赋给childrenMessage 子组件的值
+			}
+		}
+
+	}
+</script>
+
+ 
+
+二、子组件传父组件，核心--$emit，这里附上完整父子传值的代码,vue是不允许子组件向父组件传值去改变父组件的值的，但是我们可以通过自定义事件的形式去改变值，例如点击事件，再通过$emit来传递，代码注释中有介绍。
+
+父组件代码如下：
+
+<template>
+	<div>
+		<input type="text" v-model="inpMessage">
+		<button @click="handleClick">点击传给子组件</button>
+		//@messageData为子组件声明传递过来的值，函数，getData为函数，val参数是传递过来的值
+		<children :message="clickData" @messageData="getData"/>
+	</div>
+</template>
+
+<script>
+	import children from './page/children'
+	export default {
+		name: "index",
+		components:{
+			children
+		},
+		data(){
+			return{
+				inpMessage:'',
+				clickData:''
+			}
+		},
+		methods:{
+			handleClick(){
+				this.clickData = this.inpMessage
+			},
+			//接收子组件传递的值，val参数是传递过来的值 ，给inpMessage 赋值，子组件改变父组件的值
+			getData(val){
+				this.inpMessage = val
+				console.log(val)
+			}
+		}
+	}
+</script>
+
+ 
+
+
+子组件代码如下：
+
+<template>
+	<div>
+		<input type="text" v-model="childrenMessage">
+		<button @click="childClick">传值给父组件</button>
+	</div>
+</template>
+
+<script>
+	export default {
+		name: "children",
+		props:{
+			message:String
+		},
+		data(){
+			return{
+				childrenMessage:''
+			}
+		},
+		created(){
+			this.childrenMessage=this.message
+		},
+		methods:{
+		//点击传值给父组件，通过$emit传递，第一个参数messageData相当于传播的媒介，this.childrenMessage为需要传递的值，后面也可以传递多个参数
+			childClick(){
+				this.$emit('messageData',this.childrenMessage)
+				console.log(this.childrenMessage)
+			}
+		},
+		watch:{
+			message(val){
+				this.childrenMessage = val
+			}
+		}
+
+	}
+</script>
+

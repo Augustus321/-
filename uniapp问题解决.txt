@@ -1,0 +1,42 @@
+uniapp
+	获取图片高度时，获取的是图片默认设置的高度。解决方法：获取图片宽度，再除原本的宽度，获得缩小比例，再用缩小比例除图片原本高度，获得缩小后的高度。
+
+	h5页面接口请求会存在跨域问题，在manifest.json和vue.config.js解决不了的情况下可以在hbuilderx自带预览进行调试
+	
+	在做动态class时最好将参数单独放在data,如果是对象形式的话很容易不生效
+
+	uniapp项目运行时一直发http://localhost:8080/sockjs-node/info?t=1462183700002请求，"devServer"中添加"public":"0.0.0.0"
+
+	uniapp打包成h5时是单页面应用，只能优化首页的seo，可以使用自定义模板设置首页的meta和js，具体设置参考uniapp的自定义模板
+
+	app使用高度100%有的机型可能会无效，建议使用高100vh
+
+	h5如果刷新无法返回
+	// #ifdef H5
+	const pages = getCurrentPages()
+	if (pages.length > 1) {
+		uni.navigateBack(1)
+		return;
+	}
+	//使用vue-router返回上一级
+	let a = this.$router.go(-1)
+	if (a == undefined) {
+		//重新定向跳转页面
+		uni.reLaunch({
+			url: "/pages/tabbar/index"
+		})
+	}
+	return;
+	// #endif	
+
+
+
+转百度小程序
+	图片或文本居中时部分机型没反应，解决方法：使用display：flex使其居中
+
+	页面写body高度百分百，在转到百度小程序后无效，解决方法：在小程序对应页面的css添加body高百分百
+
+	在转百度小程序时，会将标签转成view，会产生一部分样式不同
+
+	小程序的swiper的坑有点多
+

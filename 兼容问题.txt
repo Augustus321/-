@@ -1,0 +1,27 @@
+要让IE兼容grid要在前面加-ms-
+	display: -ms-grid;
+	-ms-grid-columns:1fr 1fr;
+	并在每个子元素中设置
+	-ms-grid-column:1;
+
+IE中boxshadow样式不同，需在不同的浏览器中设置相应的boxshadow
+	box-shadow: 0px 0px 10px -2px #000000;
+    	-webkit-box-shadow:0px 0px 7px -6px #000000;
+    	-moz-box-shadow:0px 0px 7px -6px #000000;
+
+IE下不支持es6的模板字符串
+
+IE下不支持grid-gap
+
+IE下不支持min-height和align-items同时使用
+
+IE下隐藏textarea滚动条overflow: auto;
+
+IE下window.scroll不支持对象形式的参数，只能直接在方法里填数字
+
+IE下使用绝对定位当设置left或right超出页面宽度时，或产生横向滚动条，使用transform移动后，依然会产生
+
+IE不支持replaceAll
+
+IE下使用flex布局，最好都固定宽度或者设置flex-shrink，不然样式会出现问题
+

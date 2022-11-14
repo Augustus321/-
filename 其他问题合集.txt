@@ -1,0 +1,25 @@
+sass 与 scss 的区别
+	sass：不需要花括号和分号
+	scss：需要花括号和分号
+
+Maximum call stack size exceeded
+	超出最大调用堆栈大小
+
+Failed to execute 'appendChild' on 'Node': parameter 1 is not of type 'Node'.
+	appendChild的参数需为node节点
+	var a = document.createElement('p')
+	a.className = 'aa'
+	a.innerHTML = 'aaaa'
+	document.body.appendChild(a)
+
+打开js文件乱码时可以用记事本打开js文件，并另存为以utf-8编码的js文件
+
+页面出现像素不对的问题
+	移动端的默认布局视口宽一般是980px，所以body的100%才是980px。
+	在head标签加上这个:
+	<meta charset="UTF-8">
+    	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+    	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+Illegal return statement
+	js中return必须放在function里

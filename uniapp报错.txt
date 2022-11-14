@@ -1,0 +1,15 @@
+This may cause an update error
+	这可能会报错，说明有key或配置中出现了重复
+
+获取有默认像素的元素信息时会获取到默认值
+	尽量不要直接在标签上设置样式，如果是图片获取自适应值得话，可以先获取不是自适应的值，在通过比例来获取自适应值
+
+在标签里使用 this.xxx 不会报错  但是在其他地方会报错  
+	统一使用xxx就行
+
+获取元素信息可能会出问题，需要套一个this.$nextTick
+this.$nextTick(function() {
+				uni.createSelectorQuery().selectAll('.sdetail-top').boundingClientRect(function(rect) {
+					that.topImg = rect[0].height
+				}).exec()
+			})

@@ -1,0 +1,32 @@
+基本使用
+	安装：npm i antd
+	引入：import { Xxx } from 'antd'
+	          import 'antd/dist/antd.less'
+	使用：<Xxx>aa</Xxx>
+	//需安装less才能使用antd的样式文件，Xxx代表组件名,具体看antd文档
+
+自定义主题
+	1.安装依赖：npm i @craco/craco@alpha craco-less@alpha less less-loader
+    	2.package.json:
+        		"start": "craco start",
+        		"build": "craco build",
+        		"test": "craco test",
+    	3.根目录创建craco.config.js
+        		const CracoLessPlugin = require('craco-less');
+        		module.exports = {
+            			plugins: [{
+                			plugin: CracoLessPlugin,
+                			options: {
+                				lessLoaderOptions: {
+                    					lessOptions: {
+                    						modifyVars: { '@primary-color': 'orange' }, 
+                    						javascriptEnabled: true,
+                    					},
+                				},
+                			},
+            			}],
+        		};
+	
+	/*
+		设置主题颜色：'@primary-color': 'orange'
+	*/

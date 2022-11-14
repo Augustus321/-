@@ -1,0 +1,4 @@
+判断是否为开发环境
+	修改请求链接
+	let res = swan.getSystemInfoSync();if(res.platform === 'devtools'){getApp().globalData.url = 'https://localhost:44301'}
+

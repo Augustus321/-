@@ -1,0 +1,256 @@
+全局路由动画效果
+	.pages-enter-active,.pages-leave-active{
+ 		transition: opacity 2s;
+	}
+	.pages-enter,.pages-leave-active{
+ 		opacity: 0;
+	}
+	//注意默认的是page而不是pages
+
+路由参数判断
+	validate({ params }) {
+    		return /^\d+$/.test(params.id)// 判断是否是数字，return为真不执行操作，return为假直接变为404或者500
+	}
+
+路由跳转
+	默认
+	<nuxt-link to="/user"></nuxt-link>
+	传参
+	<nuxt-link :to="{name:'user',params:{id:1}}"></nuxt-link>
+	路径
+	<nuxt-link :to="{path:'/user',query:{id:1}}"></nuxt-link>
+	编程式传参
+	this.$router.push({path: '/home/sort/detail',query:{id: 'abc'}})
+        this.$router.push({name: 'detail',params:{id: 'abc'}})
+	跳转带下划线的页面
+	<nuxt-link to="/user/1"></nuxt-link>
+	//注意：使用params传参不会显示在url上，但刷新时会消失
+		使用query传参会显示在url上，但刷新时不会消失
+		直接斜杠加参数，可以跳转带下划线的页面，刷新时不会消失，如果参数必须填，可在同级目录位置添加index.vue
+
+嵌套路由
+	pages/
+	--| users/
+	-----| _id.vue
+	-----| index.vue
+	--| users.vue
+	文件与文件夹同名，并在父组件中使用<nuxt-child/>,可以显示子组件内容
+
+swiper	
+	使用swiper时下载swiper和vue-awesome-swiper
+	在plugins下新建文件夹：vue-swiper.js，并添加以下代码：import Vue from 'vue'
+			import VueAwesomeSwiper from 'vue-awesome-swiper/dist/vue-awesome-swiper.js'
+			Vue.use(VueAwesomeSwiper)
+	在nuxt.config.js中的css中添加：'swiper/css/swiper.css',
+	在plugins中添加：{src:'~plugins/vue-swiper',ssr:false}
+	
+	同时使用两个swiper
+	在mounted里
+	this.mySwiper.controller.control = this.mySwiper
+	this.mySwipera.controller.control = this.mySwipera
+	v-swiper:mySwiper 对应名字不同即可
+	如：
+	<div v-swiper:mySwiper="swiperOption" >
+
+		<div class="swiper-wrapper">
+
+			<div class="swiper-slide" v-for="banner in imglist">
+
+				<img :src="banner" class="swiper-img" @click="bigImg(banner)">
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div class="swiper-pagination swiper-pagination-bullets"></div>
+
+	<div class="big-img" @click="closeBigImg">
+
+		<div v-swiper:mySwipera="swiperOption2" >
+
+			<div class="swiper-wrapper">
+
+				<div class="swiper-slide swiper-slide-2" v-for="banner in imglist">
+
+					<img :src="banner" class="swiper-img-2">
+
+				</div>
+
+			</div>
+
+
+		</div>
+
+	</div>
+
+去掉网页源码下的一串关于Vuex的代码（window.__NUXT__）
+	在/node_modules/@nuxt/vue-renderer/dist/vue-renderer.js中注释三串代码
+	// 注释代码1， 禁止在页面初始化时添加window.__NUXT__代码
+	APP += `<script>${serializedSession}</script>`;  
+
+	// 注释代码2   禁止在页面路由改变时更新window.__NUXT__代码
+	hash.update(serializedSession);
+	cspScriptSrcHashes.push(`'${csp.hashAlgorithm}-${hash.digest('base64')}'`);
+	
+	在nuxt.config.js中添加：
+	hooks:{
+		'vue-renderer:ssr:context'(context){
+			const routePath = JSON.stringify(context.nuxt.routePath)
+			context.nuxt = {serverRendered:true,routePath};
+		}	
+	}
+
+让图片不转base64
+   	loaders: {
+      		file: {},
+      		fontUrl: { limit: 0 },
+      		imgUrl: { limit: 1 },//数值越大，包括的图片内存大小就越大
+      		pugPlain: {},
+      		vue: {
+        		transformAssetUrls: {
+          			video: 'src',
+          			source: 'src',
+          			object: 'src',
+          			embed: 'src'
+        		}
+      		},
+      		css: {},
+      		cssModules: {
+        		localIdentName: '[local]_[hash:base64:5]'
+      		},
+      		less: {},
+      		sass: {
+        		indentedSyntax: true
+      		},
+      		scss: {},
+      		stylus: {},
+      		vueStyle: {}
+    	}
+
+改变服务器访问地址
+	在package.json中scripts的下方添加
+	"config": {
+    		"nuxt": {
+      			"host": "192.168.0.242",
+      			"port": "8011"
+    	}
+  },
+
+网页源代码不显示css
+	extractCSS:true,
+	build: {
+        	// 隐藏css
+        	extractCSS: { allChunks: true },
+  	},
+
+引入文件大于500kb报错
+	在nuxt.config.js的build中添加：
+		babel:{compact:false}
+
+引入js报window或document错误
+	在src后面添加：ssr:false
+	如： 	plugins: [
+    			{ src: '~/plugins/js/index.js' ,ssr: false }
+  		],
+
+使用打包时配置路径
+	router:{
+		base:'/'
+	}
+
+store刷新后会消失
+	在nuxt.config.js中添加:
+	plugins:[{src:'~/plugins/storeCache',ssr:false}]
+	在该文件中添加
+	export default function(ctx){
+    		//离开页面 刷新前 将store中的数据存到session
+    		window.addEventListener('beforeunload', ()=> {
+        		sessionStorage.setItem("storeCache",JSON.stringify(ctx.store.state))
+    		});
+    		//页面加载完成  将session中的store数据
+    		window.addEventListener('load', ()=> {
+        		let storeCache = sessionStorage.getItem("storeCache")
+        		if(storeCache){
+            		// 将session中的store数据替换到store中
+            		ctx.store.replaceState(JSON.parse(storeCache));
+        		}
+    		});
+	}
+
+nuxtVueX用法
+	// import Vuex from 'vuex'
+	// import mutations from './mutation'
+	// export default () => {
+	//   return new Vuex.Store({
+	//     state: { show: 0, tabheight: 0 },
+	//     mutations
+	//   })
+	// }
+	使用此方法会被nuxt警告
+	可以使用以下方法：
+	export const state = () => ({
+  		show: 0
+	})
+	export const getters = {
+  		getToken(state){
+    			return state.token
+  		},
+	}
+	export const mutations = {
+  		select (state, index) {
+    			state.show = index
+  		},
+	}
+	export const actions = {
+    		//TODO ajax here
+	}
+
+nuxt generate打包不生成动态路由
+	在nuxt.config.js中添加：
+	generate: {
+    		routes() {
+      			return axios.get('https://my-api/users').then(res => {
+        			return res.data.map(user => {
+          				return '/users/' + user.id
+        			})
+      			})
+    		}
+  	}
+	或
+	generate: {
+    		routes: ['/users/1', '/users/2', '/users/3']
+  	}
+
+nuxt generate打包每个页面都会生成文件夹
+	在nuxt.config.js中添加：
+	generate:{
+		subFolders:false,
+	}
+
+引入vant
+	在plugins中创建文件vant.js:
+		import Vue from 'vue'
+		import { Toast } from 'vant'
+		import 'vant/lib/index.css'
+		Vue.use(Toast)
+	在nuxt.config.js中：
+	css:['vant/lib/index.css']
+	plugins:[{src:'~plugins/vant.js',ssr:true}]
+
+使用vue-baidu-map
+	在plugins中创建文件map.js:
+		import BaiduMap from 'vue-baidu-map'
+		import Vue from 'vue'
+		Vue.use(BaiduMap, {
+  			ak: '申请的百度地图密匙'
+		})
+	在nuxt.config.js中：
+	plugins:[{src:'~plugins/map.js',ssr:false}]
+
+使用md5
+	npm下载crypto
+	在使用页面中引入crypto
+	crypto.createHash('md5').update(`4b9049ac-4335-4d84-b0c9-c87620e3c86d|7300|MD5|7`).digest('hex').toUpperCase()
+

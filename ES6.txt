@@ -1,0 +1,190 @@
+解构赋值
+	let [a,...b] = [1,2,3] //a == 1,b == [2,3]
+	注意：如果剩余元素右侧有逗号，会抛出 SyntaxError，因为剩余元素必须是数组的最后一个元素。
+	
+	let obj = {a:{b:1}}
+        	const {a} = obj //传统解构赋值 可以拿到a
+        	const {a:{b}} = obj //连续解构赋值  可以拿到b
+        	const {a:{b:value}} = obj //连续解构赋值 + 重命名  可以拿到b的同时将b重命名为value
+
+判断一个数为整数
+	Number.isInteger(3)
+
+展开运算符
+	let arr1 = [1,3,5,7,9]
+        	let arr2 = [2,4,6,8,10]
+        	console.log(...arr1)//展开一个数组
+        	let arr3 = [...arr1,...arr2]//连接数组
+        
+        	//在函数中使用
+        	function sum(...numbers){
+            		return numbers.reduce((preValue,currentValue) => {
+                		return preValue + currentValue
+            		})
+        	}
+        	console.log(sum(1,2,3,4))
+
+        	//构造字面量对象时使用展开语法
+        	let person = {name:'tom',age:18}
+        	let person2 = {...person}//加{}代表克隆一个对象
+        	// console.log(...person)//报错，展开运算符不能展开对象
+        	person2.name = 'jerry'
+        	console.log(person2)
+
+        	//合并
+        	let person3 = {...person,name:'jack',address:'地球'}//已有属性将替换为新的，没有的属性将合并进去
+
+fecth
+	//基础写法（第一次response返回是否成功，需要再执行一次then获取数据）
+	//GET
+	fetch(`/api1/search/users2?q=${keyWord}`).then(
+      		return response.json()
+    	).then(
+      		data => {console.log('获取数据成功了',data)}
+    	).catch(
+		error=>{console.log('获取数据失败了',error)}
+	)
+	//POST
+	fetch(url,{
+		method:"POST",
+		body:JSON.stringify(data)
+	}).then(
+		data =>{console.log(data)}
+	).catch(
+		e => {console.log(e)}
+	)
+	//异步变同步写法(需在外部函数写await)
+	try {
+            		const response = await fetch(`/api1/search/users?q=${keyWord}`)
+            		const data = await response.json()
+            		console.log(data)
+        	} catch (error){
+            		console.log('请求出错',error)
+        	}
+
+Object方法
+	判断一个对象为空对象
+	Object.keys(obj).length <= 0
+
+Symbol.hasInstance
+	理解：
+		对象的Symbol.hasInstance属性，指向一个内部方法，当其他对象使用instanceof运算符，判断是否为该对象的实例时，会调用这个方法。
+		即：f instanceof Foo相当于Foo[Symbol.hasInstance](f)
+	语法：
+		基础用法：
+			class Foo{}
+			var f = new Foo{}
+			console.log(f instanceof Foo,Foo[Symbol.hasInstance(f))//true true
+
+		自定义Symbol.hasInstance
+			class Foo{
+				//动态方法
+				[Symbol.hasInstance](f){
+					return f === 1
+				}
+				//静态方法
+				static [Symbol.hasInstance](f){
+					return f === 2
+				}
+			}
+			var f = new Foo()
+			//使用动态方法
+			console.log(1 instanceof new Foo(),x[Symbol.hasInstance](1)) //true
+			//使用静态方法
+			consol.log(2 instanceof Foo,Foo[Symbol.hasInstance](2),f instanceof Foo)//true true false
+
+		Function构造函数的Symbol.hasInstance的修改方法
+			function Foo(){}
+			Object.defineProperty(Foo,Symbol.hasInstance,{
+				value:fucntion(f){
+					return f === 1
+				}
+			})
+	说明：
+		如果我们不写Symbol.hasInstance时，构造函数会自动创建一个，它的用法为判断某个实例对象的原型链上是否有构造函数的prototype属性，
+		但当我们写了该方法时，其原本的用法便会被替换，instanceof的用法也会不同。
+
+instanceof
+	理解：
+		判断构造函数的prototype属性是否在某个实例对象的原型链上，也可以理解为调用Symbol.hasInstance方法
+	语法：
+		object instanceof constructor
+		//a instanceof A，没自定义instanceof前，第一个参数是对象，第二个参数是构造函数
+
+		function Foo(){}
+		var f = new Foo()
+		console.log(f instanceof Foo) //true，相当于f.__proto__ === Foo.prototype，也相当于Foo[Symbol.hasInstance](f)，Symbol用法在上文
+	说明：
+		//修改构造函数的原型
+		Foo.prototype = {}
+		console.log(f instanceof Foo) //false，Foo.prototype指向一个空对象，这个空对象不在f的原型链上
+		//修改构造函数的原型后，前面创建的实例对象的原型链上也不会有该构造函数修改后的原型，因此使用instanceof会返回false
+		var f2 = new Foo()
+		console.log(f2 instanceof Foo) //true
+		
+		//D继承Foo
+		function D(){}
+		D.prototype = new Foo()
+		var d = new D()
+		console.log(d instanceof D) //true
+		console.log(d instanceof Foo)//true，相当于d.__proto__ === D.prototype.__proto__ === Foo.prototype  d.__proto__.__proto__ === Foo.prototype
+		//构造函数的原型继承其它构造函数的原型后，使用该构造函数创建的实例对象的原型链上也会有该构造函数继承的原型，因此使用instanceof会返回true
+	其它用法：
+		判断数据是否为Array,Function,Object
+			var a = [] // a instanceof Array 返回true，可理解为var a = new Array()
+			var b = function(){} // b instanceof Function 返回true，可理解为var b = new Function()
+			var c = {} // c instanceof Object 返回true，可理解为var c = new Object()
+			//当a和b判断是否为Object时，也会返回true
+		自定义instanceof
+			需配合Symbol.hasInstance使用，可在Symbol的用法中查看
+			class C{
+				static [Symbol.hasInstance](x){
+					return x === 111
+				}
+			}
+			console.log(111 instanceof C) //true，这里的instanceof的被理解为第一个参数是否等于111
+	手动实现instanceof
+		function copyInstanceof(source,target){
+			//基本数据类型以及null直接返回false
+			if(!['function','object'].includes(typeof source) || source === null) return false
+			//获取source的原型对象
+			let proto = Object.getPrototypeOf(source)
+			//循环往上查找原型，直到找到与target相同的原型或找到null（没有与target相同的原型就会循环找到原型的最顶点null）
+			while(true){
+				//没找到
+				if(proto === null) return false
+				//找到相同的原型
+				if(proto === target.prototype) return true
+				proto = Object.getPrototypeOf(proto)
+			}
+		}
+
+constructor属性
+	理解：
+		定义构造函数时，js内部会自动添加一个原型（prototype）属性，并且prototype中会自动添加一个constructor属性，该属性保存指向该构造函数的一个引用。
+		当我们使用该构造函数创建实例对象时，该实例就可以使用constructor属性来访问它的构造函数。
+		该属性是易变的。
+	语法：
+		function Foo(){}
+		var f = new Foo()
+		console.log(f.constructor === Foo)//true
+		cosnole.log(f.constructor === Foo.prototype.constructor) //true
+	说明：
+		//修改构造函数的prototype
+		Foo.prototype = {a:123}
+		var f2 = new Foo()
+		console.log(f2.constructor === Foo) //false
+		consol.elog(f2.constructor === Object) //true
+		/*
+		    这里的constructor其实不是不存在了，而是指向了Object,因为{}相当于new Object()并且Object.prototype中也有一个constructor属性，
+		    所以f2.constructor找到的是Object.prototype.constructor。
+		    想要使f2.constructor指向Foo,就需要在Foo.prototype中设置constructor
+		*/
+		Foo.prototype = {constructor:Foo,a:123}
+		var f3 = new Foo()
+		console.log(f3.constructor === Foo) //true
+	其它用法：
+		var a = [] // a.constructor === Array 返回true，可理解为var a = new Array()
+		var b = function(){} // b.constructor === Function 返回true，可理解为var b = new Function()
+		var c = {} // c.constructor === Object 返回true，可理解为var c = new Object()
+
