@@ -16,7 +16,8 @@
 				}).exec(function(res){
 					_this.height = height;
 				})
-	this.$nextTick(function() {}) //最好套在这里面
+	this.$nextTick(function() {}) //最好套在这里面或onReady里，不写在里面时刷新会报错
+	//有图片时必须设好宽高，不然获取的信息会不准
 
 placeholder相关问题
 	在uniapp中使用placeholder可以设置class设置样式，但在小程序中会失效，建议直接在标签上使用placeholder-style
@@ -607,4 +608,32 @@ async await用法
 			fail: function(err) {}
 		}
 	});
+
+上传仓库
+	//创建.gitignore文件
+		命令：touch .gitignore
+	//添加内容
+		node_modules/
+		.project
+		unpackage/
+		.DS_Store
+	//之前提交过的文件删除
+		git rm -r --cached unpackage
+	*注：uni_modules文件夹需要提交
+
+引入自定义组件
+	组件：
+		export default{
+			name:"name"
+		}
+	使用页面：
+		//script里
+		import name from "@/components/name/name.vue"
+		export default{
+			components:{
+				name
+			}
+		}
+		//html里
+		<name></name>
 

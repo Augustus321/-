@@ -232,3 +232,9 @@ css文字渐变
 	display:flex;
 	align-items:baseline;
 
+背景图
+	//调整大小 background-size
+	contain //适合背景定位区域的最大大小
+	cover //完全覆盖背景定位区域的最小大小
+	100px 100px //调整到指定大小
+	50% 50% //相对于元素尺寸调整到指定大小

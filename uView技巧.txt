@@ -1,0 +1,6 @@
+u-button设置字体大小
+	::v-deep.u-button{
+		span{
+			font-size:10px;
+		}
+	}
