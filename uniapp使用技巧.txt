@@ -39,6 +39,7 @@ md5加密
 
 下拉框
 	uniapp中没有直接下拉的下来框，可以直接使用picker代替下拉框
+	//尽量写在最下方
 	<picker class="picker-box" @change="bindPickerChange" :range="array">
 		<view class="xuqiu-left-item-box">
 			<label class="left-title">需求类型：</label>
