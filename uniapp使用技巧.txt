@@ -638,3 +638,12 @@ async await用法
 		//html里
 		<name></name>
 
+使用自定义图标
+	1.下载uni-icons到项目
+	2.在iconfont中找一个图标添加到购物车，再在购物车中添加到项目，在项目中下载到本地，将iconfont.css和iconfont.ttf移动到static根目录下
+	3.在iconfont.css中修改src中的地址：src:url('/static/iconfont.ttf') format('truetype')
+	4.在App.vue的style标签中引入：@import "@/static/iconfont.css";
+	5.使用ttf在线编辑器打开iconfont.ttf，导入自定义的svg字体图标并设置好unicode和命名，然后选择导出为ttf并替换原来的iconfont.ttf
+	6.在iconfont.css中添加该图标：.icon-head:before{content:"\e001"} /* icon后写命名，content里写unicode */
+	7.<uni-icons custom-prefix="iconfont" type="icon-head" size="30"></uni-icons>
+
