@@ -1,0 +1,48 @@
+请求接口封装
+common.js
+	import store from '@/store'
+	// 请求封装
+	const baseUrl = 'http://anmo.ya2.top'
+	const request = (url , reqData = {} , type = 'GET',loading = '加载中') => {
+		return new Promise((resolve, reject) => {
+			//加载动画
+			uni.showLoading({
+				title: loading,
+				mask: true
+			})
+			uni.request({
+				method: type,
+				url: baseUrl + url,
+				data: reqData,
+				header: store.state.myHeader,
+				dataType: 'json',
+				success: (res) => {
+					uni.hideLoading();
+					//判断是否成功,有code代表不成功
+					if (res.data.code) {
+						uni.showToast({
+							title: res.data.message,
+							icon: 'none',
+							mask: true
+						})
+						return
+					}
+					resolve(res.data)
+				},
+				fail: (err) => {
+					uni.hideLoading();
+					reject(err)
+				}
+			})
+		});
+	}
+	export default request
+main.js
+	//全局挂载request请求
+	import request from 'common/common.js'
+	Vue.prototype.$request = request
+使用
+	this.$request('/api/loginMobile', {data}, 'POST','登录中').then((res) => {
+		console.log(res)
+	})
+

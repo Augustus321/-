@@ -48,11 +48,52 @@
 在页面中使用
 	import { mapState,mapMutations } from 'vuex'
 
-	computed:mapState(['aa'] //使用存储的变量
+	computed:mapState(['aa']) //使用存储的变量
 	methods:{...mapMutations(['bc'])} //使用mutations的方法
 
 	this.aa   this.bc()
 
+将mapState和mapMutaions全局混入（不用每个页面都引入mapState和mapMutaions）
+
+	在store文件夹下创建vuex.mixin.js
+	/***
+ 		* vuex的全局mixin,免去在组件或页面中从vuex中引入 mapState和mapMutations
+ 		* 在页面或组件中修改store的状态时，调用方法 eg： 
+ 		*  this.$vuex('mutation', value);
+ 	***/
+
+	import { mapState, mapMutations } from "vuex";
+	import store from "@/store";
+
+	//获取sotre中的所有state
+	let $vuexStoreKey = [];
+	try {
+  		$vuexStoreKey = store.state ? Object.keys(store.state) : [];
+	} catch (error) {}
+
+	module.exports = {
+  		// 创建时将更新状态方法挂载在$vuex中
+  		/**
+   			* @param mutation - store中的方法
+   			* @param value - 要修改的值
+   		* */
+
+  		created() {
+    			this.$vuex = (mutation, value) => {
+      				this.$store.commit(mutation, value);
+    			};
+  		},
+  		computed: {
+			//将所有state解构到全局混入的mixin中
+    			...mapState($vuexStoreKey),
+  		}
+	};
+	
+	在main.js中引入
+	//引入vuex
+	import store from '@/store'
+	import vuexStore from '@/store/vuex.mixin.js'
+	Vue.mixin(vuexStore)
 
 
 登录案例
@@ -182,7 +223,8 @@
 
 
 使用persistedstate时转小程序会出现报错
-	可以引入 npm i mp-storage --save
+	下载 npm i mp-storage --save
+	引入 import { localStorage } from 'mp-storage'
 	直接将plugins改成下面代码
 	plugins: [
 	    createPersistedState({
