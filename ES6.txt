@@ -188,3 +188,27 @@ constructor属性
 		var b = function(){} // b.constructor === Function 返回true，可理解为var b = new Function()
 		var c = {} // c.constructor === Object 返回true，可理解为var c = new Object()
 
+链判断运算符
+	理解：
+		1.读取对象中的某个属性，需要判断一下上层对象是否存在
+		2.判断对象方法是否存在，有就执行，没有就返回undefined
+	语法：
+		//对应理解顺序
+		1.1 obj?.prop   //a?.b    a == null ? undefined : a.b
+		1.2 obj?.[expr]  //a?.[x]   a == null ? undefined : a[x]
+		2.1 func?.(...args)  //a?.()   a == null ? undefined : a()
+		2.2 obj?.func(...args)  // a?.b()  a == null ? undefined : a.b()
+	说明：
+		1.后两种的调用如果既不是 null 或 undefined 也不是函数，那么会报错
+		2.如果 ? 前的变量为 null 或 undefined 那么后面的代码就不会执行（短路机制）
+			a?.[++x]  // a == null ? undefined : a[++x]
+		3.如果有括号那么链判断只会对括号内产生影响，?.运算符不应该使用圆括号
+			(a?.b).c   // (a == null ? undefined : a.b).c   c总是会执行
+		4.以下写法会报错
+			(1).构造函数  new a?.()   new a?.b()
+			(2).链判断运算符的右侧有模板字符串  a?.`{b}`  a?.b`{c}`
+			(3).链判断运算符的左侧是super  super?.()  super?.foo
+			(4).链运算符用于赋值运算符左侧  a?.b = c
+		5.右侧不得为十进制数值
+			为了兼容以前的代码  foo?.3:0 被解析成 foo? .3 : 0，因此如果?.后面紧跟十进制数字那么?.不再被看成一个完整的运算符
+
