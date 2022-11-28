@@ -238,3 +238,23 @@ css文字渐变
 	cover //完全覆盖背景定位区域的最小大小
 	100px 100px //调整到指定大小
 	50% 50% //相对于元素尺寸调整到指定大小
+
+优惠券
+	width: 250px;
+    	height: 100px;
+    	position: relative;
+    	background: radial-gradient(circle at right top, transparent 10px,  #28A4F2 0) top left / 60px 51% no-repeat,
+      		radial-gradient(circle at right bottom, transparent 10px,  #28A4F2 0) bottom left /60px 51% no-repeat,
+      		radial-gradient(circle at left top, transparent 10px, #eeeeee 0) top right /190px 51% no-repeat,
+      		radial-gradient(circle at left bottom, transparent 10px, #eeeeee 0) bottom right /190px 51% no-repeat;
+   	filter: drop-shadow(3px 3px 3px rgba(0,0,0,.3));
+	&::after{
+		content: '';
+    		height: 80px;
+    		border: 1px dashed #fff;
+    		position: absolute;
+    		left: 60px;
+    		top: 0;
+    		bottom: 0;
+    		margin: auto;
+	}
