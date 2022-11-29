@@ -29,7 +29,7 @@ uniapp
 	return;
 	// #endif	
 
-
+	Chrome中无法正常使用位置信息，只能用其他调试工具
 
 转百度小程序
 	图片或文本居中时部分机型没反应，解决方法：使用display：flex使其居中
@@ -39,4 +39,13 @@ uniapp
 	在转百度小程序时，会将标签转成view，会产生一部分样式不同
 
 	小程序的swiper的坑有点多
+
+转微信小程序
+	使用位置信息需在manifest中配置
+		"permission" : {
+            			"scope.userLocation" : {
+                			"desc" : "你的位置信息将用于小程序位置接口的效果展示"
+            			}
+        		},
+        		"requiredPrivateInfos" : [ "getLocation", "chooseLocation","onLocationChange" ]
 
