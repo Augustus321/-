@@ -647,3 +647,6 @@ async await用法
 	6.在iconfont.css中添加该图标：.icon-head:before{content:"\e001"} /* icon后写命名，content里写unicode */
 	7.<uni-icons custom-prefix="iconfont" type="icon-head" size="30"></uni-icons>
 
+批量赋值
+	//字段名相同则覆盖，不同则保留原来的值，原来没有的字段会添加进去
+	Object.assign(this.$data,data)
