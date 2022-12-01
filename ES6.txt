@@ -212,3 +212,17 @@ constructor属性
 		5.右侧不得为十进制数值
 			为了兼容以前的代码  foo?.3:0 被解析成 foo? .3 : 0，因此如果?.后面紧跟十进制数字那么?.不再被看成一个完整的运算符
 
+Array
+	arr.some()
+		理解：
+			检测数组中是否存在符合条件的元素，只要有一个符合就返回true
+		语法：
+			arr.some()
+			const isTrue = arr.some((item,index,arr) => {
+				return item === 1
+			})
+		说明：
+			1.some()不会检测空数组
+			2.some()不会改变原始数组
+			3.some()只要有一个符合就返回true
+

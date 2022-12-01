@@ -650,3 +650,9 @@ async await用法
 批量赋值
 	//字段名相同则覆盖，不同则保留原来的值，原来没有的字段会添加进去
 	Object.assign(this.$data,data)
+
+刷新当前页
+	uni.redirectTo({
+       		url: '你的当前页面路径'
+   	});
+

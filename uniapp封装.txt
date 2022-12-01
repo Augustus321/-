@@ -48,3 +48,110 @@ main.js
 		console.log(res)
 	})
 
+
+
+
+
+上传图片封装（阿里云OSS直传）
+// 引入base64遍码，用于图片上传
+import Base64 from '@/common/base64.js'
+// 引入crypto加密，用于图片上传
+import crypto from 'crypto-js'
+// 接收调用页面data中的上传数组和上传图片信息
+const uploadPic = async (fileList, event) => {
+	// 当设置 multiple 为 true 时, file 为数组格式，否则为对象格式
+	let lists = [].concat(event.file)
+	let fileListLen = fileList.length
+	lists.map((item) => {
+		fileList.push({
+			...item,
+			status: 'uploading',
+			message: '上传中'
+		})
+	})
+	for (let i = 0; i < lists.length; i++) {
+		try{
+			const result = await uploadFilePromise(lists[i].url, lists[i].name)
+			let item = fileList[fileListLen]
+			fileList.splice(fileListLen, 1, Object.assign(item, {
+				status: '',
+				message: '',
+				url: result
+			}))
+			fileListLen++
+		}catch{
+			fileList.splice(fileListLen, 1)
+		}
+	}
+}
+
+async function uploadFilePromise(url, name) {
+	//设置图片各字
+	const last = name.substr(name.lastIndexOf("."), name.length)
+	const fileName = Date.parse(new Date()) + last;
+	// 获取存储的 oss 数据
+	let ossData = store.state.ossData
+	// 判断 STStoken 是否过期，不使用 STStoken 方式的话，accessKeyId 等是永久有效的，不会过期
+	const expire = ossData?.expire_at
+	if (!expire || expire * 1000 < Date.parse(new Date())) {
+		// 获取阿里云 oss 数据
+		ossData = await request('/api/oss/web-auth', {}, 'GET', {
+			show: false
+		})
+		store.commit('setOss', ossData)
+	}
+	// 设置 policy 策略
+	const policyText = {
+		expiration: new Date(ossData.expire_at * 1000).toISOString(), // 设置 policy 过期时间，如果后台有返回就用后台的，没有就设置为一个小时。
+		conditions: [
+			["content-length-range", 0, 1024 * 1024 * 1024],
+		],
+	};
+	const policy = Base64.encode(JSON.stringify(policyText)) // policy 必须为 base64 的 string。
+	// 设置签名
+	const signature = crypto.enc.Base64.stringify(crypto.HmacSHA1(policy, ossData.accessKeySecret));
+	// 设置 formData 内容
+	const formData = {
+		OSSAccessKeyId: ossData.accessKeyId, // oss 上传的入口 id，后台获取
+		signature, //签名，加密的字符串，如果是 STStoken 方式则须要自己定义 signature，如是不是则可直接在后台拿到
+		policy, //策略，base64 的 string,如果是 STStoken 方式则须要自己定义 policy，如果不是则可直接在后台拿到
+		'x-oss-security-token': ossData.stsToken, //使用 STStoken 上传时必须填写
+		key: `${ossData.prefix}/${fileName}`, //后台返回用于存储的文件夹名称+图片各称，如：/upload/123.png
+		success_action_status: 200 //设置状态码为 200，不设置时状态码为 204
+	}
+	return new Promise((resolve, reject) => {
+		let a = uni.uploadFile({
+			url: ossData.host, // 仅为示例，非真实的接口地址
+			filePath: url,
+			name: 'file',
+			formData: formData,
+			success: (res) => {
+				console.log(res)
+				let ossFileName = '';
+				if(res.statusCode === 200){
+					ossFileName = `${ossData.host}/${ossData.prefix}/${fileName}`
+					resolve(ossFileName)
+				}else{
+					uni.showToast({
+						title:'上传失败',
+						icon:'error',
+						mask:true,
+						duration:500
+					})
+					reject()
+				}
+			}
+		});
+	})
+}
+
+main.js
+	//全局挂载request请求
+	import uploadPic from 'common/common.js'
+	Vue.prototype.$uploadPic = uploadPic
+使用
+	// uView中的上传图片组件的方法
+	afterRead(event){
+		//第一个参数直接传this.picList，可直接在封装的js中修改data里的picList数据
+		this.$uploadPic(this.picList, event)
+	}
