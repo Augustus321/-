@@ -656,3 +656,73 @@ async await用法
        		url: '你的当前页面路径'
    	});
 
+路由拦截
+	npm install uni-simple-router
+	
+	//vue.config.js
+	const TransformPages = require('uni-read-pages')
+	const {webpack} = new TransformPages()
+	module.exports = {
+		configureWebpack: {
+			plugins: [
+				new webpack.DefinePlugin({
+					ROUTES: webpack.DefinePlugin.runtimeValue(() => {
+						const tfPages = new TransformPages({
+							includes: ['path', 'name', 'aliasPath','meta']
+						});
+						return JSON.stringify(tfPages.routes)
+					}, true )
+				})
+			]
+		}
+	}
+
+	// router.js
+	import {RouterMount,createRouter} from 'uni-simple-router';
+
+	const router = createRouter({
+		platform: process.env.VUE_APP_PLATFORM,  
+		routes: [...ROUTES]
+	});
+	//全局路由前置守卫
+	router.beforeEach((to, from, next) => {
+		if(token && to.meta?.loginAuth){
+			//跳转登录
+		}else{
+			next();
+		}
+	});
+	// 全局路由后置守卫
+	router.afterEach((to, from) => {
+    		console.log('跳转结束')
+	})
+
+	export {
+		router,
+		RouterMount
+	}
+
+	//main.js
+	import {router,RouterMount} from './router.js'  //路径换成自己的
+	Vue.use(router)
+	// #ifdef H5
+		RouterMount(app,router,'#app')
+	// #endif
+
+	// #ifndef H5
+		app.$mount(); //为了兼容小程序及app端必须这样写才有效果
+	// #endif
+
+	//pages.json
+	"pages":"pages/user/user",
+	"meta":{"loginAuth":true}
+
+	//login.vue
+	if (this.$route.query.path) {
+		this.$router.replace(this.$route.query.path)
+	} else {
+		uni.switchTab({
+			url: '/pages/index/index'
+		})
+	}
+
