@@ -726,3 +726,7 @@ async await用法
 		})
 	}
 
+获取当前页面路由url
+	let routes = getCurrentPages(); // 获取当前打开过的页面路由数组
+	let curRoute = routes[routes.length - 1].route // pages/login/login
+

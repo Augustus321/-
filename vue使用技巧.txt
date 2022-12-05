@@ -173,3 +173,4 @@ swiper在vue中分页器小点样式无法更改
 
 获取元素高度
 	this.$refs.head.offsetHeight
+

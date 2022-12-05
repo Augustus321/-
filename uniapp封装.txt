@@ -86,8 +86,14 @@ const uploadPic = async (fileList, event) => {
 }
 
 async function uploadFilePromise(url, name) {
-	//设置图片各字
-	const last = name.substr(name.lastIndexOf("."), name.length)
+	//设置图片各字，手机上传图片没有name，因此在这里做一个判断，有就用name，没有就用url，主要是为了取后面的扩展名
+	let last = ''
+	if (!name) {
+		// 如果没有name
+		last = url.substr(url.lastIndexOf("."), url.length)
+	} else {
+		last = name.substr(name.lastIndexOf("."), name.length)
+	}
 	const fileName = Date.parse(new Date()) + last;
 	// 获取存储的 oss 数据
 	let ossData = store.state.ossData
