@@ -33,6 +33,8 @@ uniapp
 
 	部分机型不兼容grid布局，尽量用flex
 
+	部分机型不支持在padding(目前发现)中使用calc()计算苹果x的横条，尽量再加一层盒子在外面的盒子加padding-bottom:苹果x横条高;
+
 转百度小程序
 	图片或文本居中时部分机型没反应，解决方法：使用display：flex使其居中
 

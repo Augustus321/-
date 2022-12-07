@@ -1,0 +1,26 @@
+在 uniapp 中可使用“微信小程序插件SDK”中的 api，同时不管打包成什么端 key 都使用微信小程序的 key。(用的什么SDK就用什么key)
+	1.下载微信小程序插件SDK到项目根目录，并使用一个文件夹包住
+		看uniapp相关图
+	2.在同目录中新建一个 index.js
+		const amapFile = require('js_sdk/amap-wx.130.js')
+		const amapPlugin = new amapFile.AMapWX({
+				key:'a8900169f2a91405e61169b1ca746dd2'
+		})
+		export default amapPlugin
+	3.在main.js中引入
+		//引入高德
+		import amapPlugin from '@/js_sdk'
+		Vue.prototype.$amap = amapPlugin
+	4.页面中使用
+		this.$amap.fn()
+		
+获取用户地理信息
+	this.$amap.getRegeo({
+		success: (res) => {
+			console.log(res)
+		},
+		fail:(err)=>{
+			console.log(err)
+		}
+	})
+
