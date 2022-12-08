@@ -292,4 +292,12 @@ Number.isInteger(3) //ES6
 	Array.isArray([1,2,3]) //true
 	Object.prototype.toString.call(arr) //'[object Array]'
 
+注解
+	使用 /** */ 包起来，可以在使用的时候知道怎么用
+	@param 描述参数的信息
 
+	/**
+	*@param {string} a 函数中的参数
+	*/
+	function abc(a){}
+	//鼠标移到 a 上面就可以看见这个参数的描述和类型
