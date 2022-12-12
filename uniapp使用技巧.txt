@@ -497,6 +497,7 @@ app中设置状态栏高度
 
 阻止冒泡
 	@click.stop
+	如果标签加上 @click.stop 无效或报错，可以尝试在其父组件加 @click.stop
 
 async await用法
 	methods里
