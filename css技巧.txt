@@ -258,3 +258,7 @@ css文字渐变
     		bottom: 0;
     		margin: auto;
 	}
+
+z-index
+	当父元素的 z-index 比 父元素的兄弟元素低时，子元素的 z-index 无论多大，都会在父元素的兄弟元素的下方
+
