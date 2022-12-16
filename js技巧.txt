@@ -301,3 +301,9 @@ Number.isInteger(3) //ES6
 	*/
 	function abc(a){}
 	//鼠标移到 a 上面就可以看见这个参数的描述和类型
+
+判断数组中是否有某个值
+	// indexOf 返回元素下标或-1
+	arr.indexOf(2)
+	// includes 返回true或false
+	arr.includes(2) ? console.log("存在") : console.log("不存在")
