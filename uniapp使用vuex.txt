@@ -59,7 +59,7 @@
 	/***
  		* vuex的全局mixin,免去在组件或页面中从vuex中引入 mapState和mapMutations
  		* 在页面或组件中修改store的状态时，调用方法 eg： 
- 		*  this.$vuex('mutation', value);
+ 		*  this.$vuex('mutation', value); // 第一个参数是mutation的方法名，第二个参数是数据
  	***/
 
 	import { mapState, mapMutations } from "vuex";

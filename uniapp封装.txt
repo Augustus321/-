@@ -1,5 +1,6 @@
 请求接口封装
 common.js
+	//引入 store
 	import store from '@/store'
 	// 请求封装
 	const baseUrl = 'http://anmo.ya2.top'
@@ -53,6 +54,9 @@ main.js
 
 
 上传图片封装（阿里云OSS直传）
+准备工作：
+	将 base64.js 放在 common 文件夹中（实用文件中有现成的）
+	下载 crypto-js    npm install crypto-js
 // 引入base64遍码，用于图片上传
 import Base64 from '@/common/base64.js'
 // 引入crypto加密，用于图片上传
@@ -152,7 +156,7 @@ async function uploadFilePromise(url, name) {
 }
 
 main.js
-	//全局挂载request请求
+	//全局挂载上传图片的方法
 	import uploadPic from 'common/common.js'
 	Vue.prototype.$uploadPic = uploadPic
 使用
@@ -161,3 +165,45 @@ main.js
 		//第一个参数直接传this.picList，可直接在封装的js中修改data里的picList数据
 		this.$uploadPic(this.picList, event)
 	}
+
+判断是否登录
+common.js
+	/*
+		1.一般的判断登录可在路由拦截中实现，但 tabbar 会出现无法正常跳转的问题，因此在这里写一个方法针对 tabar 的登录判断
+		2.有的页面不需要强制登录，这时页面可根据是否登录来进行不同的请求（请求中如果返回未登录的状态会强制跳转登录页面）
+	*/
+	const isLogin = (show, path) => {
+		// 获取 token
+		const token = store.state.myHeader?.Authorization
+		//初始化是否登录，true 为已登录，false 为未登录
+		let isLogin = true
+		//如果 没有获取到 token
+		if (!token) {
+			isLogin = false
+			// 跟据 show 的值，来判断是否需要提示登录
+			if (show) {
+				uni.showModal({
+					title: '未登录',
+					content: '发现您未登录，请先登录',
+					success: (res) => {
+						//如果确认登录，则跳转 login 并带上当前页面的 url 
+						if (res.confirm) {
+							uni.navigateTo({
+								url: `/pages/login/login?path=${path}`
+							})
+						}
+					}
+				})
+			}
+		}
+		return isLogin
+	}
+
+main.js
+	//全局挂载上传图片的方法
+	import isLogin from 'common/common.js'
+	Vue.prototype.$isLogin = isLogin
+使用
+	// 判断是否登录，并将登录状态保存到 data，第一个参数为是否需要提示登录，第二个参数为当前页面的 url
+	this.isLogin = this.$isLogin(true,'/pages/user/user')
+	this.isLogin = this.$isLogin(false)

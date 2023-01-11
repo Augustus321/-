@@ -243,6 +243,12 @@ css文字渐变
 	width: 250px;
     	height: 100px;
     	position: relative;
+	/* 
+		circle at + 方向，表示缺口在什么位置，如：right top表示在右上
+		transparent + px，表示缺口大小，如：10px表示缺口为10px
+		#28A4f2，表示四分之一的颜色
+		top left / 60px 51% no-repeat，表示四分之一的左上区域的宽60px高51%
+	 */
     	background: radial-gradient(circle at right top, transparent 10px,  #28A4F2 0) top left / 60px 51% no-repeat,
       		radial-gradient(circle at right bottom, transparent 10px,  #28A4F2 0) bottom left /60px 51% no-repeat,
       		radial-gradient(circle at left top, transparent 10px, #eeeeee 0) top right /190px 51% no-repeat,

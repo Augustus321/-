@@ -659,6 +659,7 @@ async await用法
 
 路由拦截
 	npm install uni-simple-router
+	npm install uni-read-pages
 	
 	//vue.config.js
 	const TransformPages = require('uni-read-pages')
@@ -679,16 +680,43 @@ async await用法
 	}
 
 	// router.js
-	import {RouterMount,createRouter} from 'uni-simple-router';
+	import {RouterMount,createRouter,runtimeQuit} from 'uni-simple-router';
 
 	const router = createRouter({
-		platform: process.env.VUE_APP_PLATFORM,  
+		platform: process.env.VUE_APP_PLATFORM,
+		//获取路由的type和msg（这两个字段是插件的回调）
+		routerErrorEach: ({
+			type,
+			msg
+		}) => {
+			console.log({
+				type,
+				msg
+			})
+			// #ifdef APP-PLUS
+			// 如果type为3则表示页面栈不够获取了，level为1，执行再按一次退出程序的方法
+			if (type === 3) {
+				router.$lockStatus = false;
+				runtimeQuit();
+			}
+			// #endif
+		},
 		routes: [...ROUTES]
 	});
 	//全局路由前置守卫
 	router.beforeEach((to, from, next) => {
-		if(token && to.meta?.loginAuth){
-			//跳转登录
+		//获取token
+		const token = ''
+		//跳转登录
+		// tabbar的登录判断在需要判断的页面，写在这里会有问题，可使用封装的登录判断
+		// token 是自己获取的，loginAuth 需要在pages中设置，有登录需求的 loginAuth 设为 true，没有则设为 false
+		if (!token && to.meta?.loginAuth) {
+			next({
+				name: 'login',
+				params: {
+					path: to.path
+				}
+			})	
 		}else{
 			next();
 		}
@@ -706,6 +734,15 @@ async await用法
 	//main.js
 	import {router,RouterMount} from './router.js'  //路径换成自己的
 	Vue.use(router)
+
+	// 将原来的替换，并且注意是否使用 store ，没有则删除
+	import Vue from 'vue'
+	Vue.config.productionTip = false
+	App.mpType = 'app'
+	const app = new Vue({
+    		...App,
+		store
+	})
 	// #ifdef H5
 		RouterMount(app,router,'#app')
 	// #endif
@@ -719,8 +756,12 @@ async await用法
 	"meta":{"loginAuth":true}
 
 	//login.vue
-	if (this.$route.query.path) {
-		this.$router.replace(this.$route.query.path)
+	//判断跳转到 login 页面的 url 中是否有参数，有则跳转相应页面，没有则跳转 index
+	if (this.goPath) {
+		//这里需要判断是否为 tabar 页面，如果是则使用 switchTab 跳转，不是则使用 redirectTo
+		uni.redirectTo({
+			url:this.goPath
+		})
 	} else {
 		uni.switchTab({
 			url: '/pages/index/index'
