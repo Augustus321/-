@@ -307,3 +307,8 @@ Number.isInteger(3) //ES6
 	arr.indexOf(2)
 	// includes 返回true或false
 	arr.includes(2) ? console.log("存在") : console.log("不存在")
+
+判断两个数组是否相同
+	//相同为空数组 []，不同为 false
+	const isSame = a.length == b.length && a.filter(item => !b.includes(item))
+

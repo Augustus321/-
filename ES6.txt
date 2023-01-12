@@ -226,3 +226,16 @@ Array
 			2.some()不会改变原始数组
 			3.some()只要有一个符合就返回true
 
+	arr.filter()
+		理解：
+			过滤数组，返回符合条件的值
+		语法：
+			arr.filter()
+			const newArr = arr.filter(item,index,arr) => {
+				return item > 5
+			})
+		说明：
+			1.filter()不会检测空数组
+			2.filter()不会改变原始数组
+			3.filter()会生成一个新数组，数组中的元素为过滤后符合条件的值
+
