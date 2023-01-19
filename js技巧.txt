@@ -305,10 +305,13 @@ Number.isInteger(3) //ES6
 判断数组中是否有某个值
 	// indexOf 返回元素下标或-1
 	arr.indexOf(2)
+
 	// includes 返回true或false
 	arr.includes(2) ? console.log("存在") : console.log("不存在")
+
+	// 判断是否有某个对象，有则返回下标，没有则返回-1
+	const hasIndex = aa.findIndex(aItem => aItem.id == id)
 
 判断两个数组是否相同
 	//相同为空数组 []，不同为 false
 	const isSame = a.length == b.length && a.filter(item => !b.includes(item))
-
