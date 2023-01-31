@@ -772,3 +772,13 @@ async await用法
 	let routes = getCurrentPages(); // 获取当前打开过的页面路由数组
 	let curRoute = routes[routes.length - 1].route // pages/login/login
 
+页面之间通信
+	监听全局的自定义事件
+	uni.$on('name', (data) => {console.log(data)})  //通过 uni.$emit 触发，挂载后才能监听，所以一般写在父组件
+	uni.$once('name', (data) => {console.log(data)}) // 同上，触发一次后自动移除
+
+	触发全局的自定义事件
+	uni.$emit('name', {aa:bb})  //在需要触发的地方使用，第二个参数是需要传递给监听页面的参数
+
+	移除全局自定义事件
+	uni.$off('name' ,callback)  //没参数移除所有监听器，如果有事件名则移除该事件所有监听器，如果有事件名和回调则移除这个回调的监听器(回调必须和$on的回调为同一个)
