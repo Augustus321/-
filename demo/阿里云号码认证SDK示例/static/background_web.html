@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=yes, viewport-fit=cover"/>
+    <style>
+        html,body,div{
+            margin: 0;
+            height: 0;
+        }
+        body{
+            width: 100%;
+            height: 100vh;
+        }
+        .carousel-wrap {
+            width: 100%;
+            height: 100vh;
+            z-index: -10;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+
+            background-size: cover;
+            -webkit-background-size: cover;
+            -o-background-size: cover;
+            opacity: 1;
+            transition: opacity 1s linear;
+            -webkit-transition:opacity 1s linear;
+        }
+
+        .carousel-wrap.display{
+            /* opacity: 0.5; */
+        }
+
+    </style>
+</head>
+<body>
+<div id="carouselWrap" class="carousel-wrap">
+</div>
+<script>
+    var bgImgArr = [
+        './web_background_1.jpeg',
+        './web_background_2.jpeg',
+        './web_background_3.jpeg',
+        './web_background_4.jpeg'
+    ];
+    var currentIndex = 0;
+    var carouselWrap = document.getElementById('carouselWrap');
+
+    setBGimg(bgImgArr[currentIndex]);
+    setInterval(()=>{
+        setBGimg(bgImgArr[currentIndex]);
+    }, 2500);
+    function setBGimg(url){
+        carouselWrap.style.backgroundImage = 'url('+url+')';
+        carouselWrap.className = 'carousel-wrap display'
+        currentIndex++;
+        if(currentIndex > bgImgArr.length -1){
+            currentIndex = 0;
+        }
+    }
+
+</script>
+</body>
+</html>
