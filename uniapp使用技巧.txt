@@ -782,3 +782,12 @@ async await用法
 
 	移除全局自定义事件
 	uni.$off('name' ,callback)  //没参数移除所有监听器，如果有事件名则移除该事件所有监听器，如果有事件名和回调则移除这个回调的监听器(回调必须和$on的回调为同一个)
+
+背景音乐
+	this.bgAudioManager = uni.getBackgroundAudioManager();
+	this.bgAudioManager.title = '致爱丽丝'
+	this.bgAudioManager.coverImgUrl = 'https://web-assets.dcloud.net.cn/unidoc/zh/music-a.png'
+	this.bgAudioManager.src = 'https://bjetxgzv.cdn.bspapp.com/VKCEYUGU-hello-uniapp/2cc220e0-c27a-11ea-9dfb-6da8e309e0d8.mp3'
+	注意：
+	ios需要在manifest中设置  manifest.json -> app-plus -> distribute -> ios 节点添加 "UIBackgroundModes":["audio"]
+
