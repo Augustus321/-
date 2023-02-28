@@ -791,3 +791,17 @@ async await用法
 	注意：
 	ios需要在manifest中设置  manifest.json -> app-plus -> distribute -> ios 节点添加 "UIBackgroundModes":["audio"]
 
+阿里云一键登录
+	通过 https://ext.dcloud.net.cn/plugin?id=4297 云打包到项目中（填写对应的包名）
+	在 mainfest.json 中的“App原生插件配置”中点击“选择云端插件”选择“阿里云号码认证SDK”
+	将 ui-config.js 添加到 common 文件夹中
+	在 APP.vue 中，使用 aLiSDKModule.setAuthSDKInfo 初始化 aLiSDKModule 
+	（具体使用方法查看 demo 文件夹中的“阿里云号码认证SDK示例”）
+
+JPush极光消息推送
+	通过 https://ext.dcloud.net.cn/plugin?id=4035 和 https://ext.dcloud.net.cn/plugin?id=4028 将 JPush 和 JCore 云打包到项目中（填写对应的包名）
+	在 mainfest.json 中的“App原生插件配置”中点击“选择云端插件”选择“极光JPush官方SDK”和“极光JCore官方SDK”并填写 appkey
+	在APP.vue中，先创建常量 const jpushModule = uni.requireNativePlugin("JG-JPush") ；并在 onLaunch 中，初始化 jpushModule.initJPushService()
+	（具体使用方法查看 demo 文件夹中的“极光JPush官方SDK示例”）
+	（要想关闭应用后也能收到消息，需要配置各大厂商信息）
+
