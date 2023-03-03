@@ -20,20 +20,11 @@ common.js
 				header: store.state.myHeader,
 				dataType: 'json',
 				success: (res) => {
-					uni.hideLoading();
-					//判断是否成功,有code代表不成功
-					if (res.data.code) {
-						uni.showToast({
-							title: res.data.message,
-							icon: 'none',
-							mask: true
-						})
-						return
-					}
+					uni.hideLoading()
 					resolve(res.data)
 				},
 				fail: (err) => {
-					uni.hideLoading();
+					uni.hideLoading()
 					reject(err)
 				}
 			})

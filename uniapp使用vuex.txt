@@ -16,11 +16,17 @@
 	})
 	const store = new Vuex.Store({ //全局变量定义
 		state: {
+			/*
+				状态存储的地方
+			*/
 			forcedLogin: false, //是否需要强制登录
 			hasLogin: false,
 			userinfo:'',
 		},
 		mutations: {
+			/*
+				更改 store 中的状态，必须是同步执行
+			*/
 			login(state, user) {
 				state.hasLogin = true;
 				state.userinfo = user || '';
@@ -33,6 +39,32 @@
 				state.forcedLogin = boolean
 			}
 		},
+		actions:{
+			/*
+				当需要用到异步提交 mutation 时，可以用到（不是直接更改状态）
+			*/
+			aaa(context){
+				context.commit('login')
+			},
+			abc({commit,dispatch,state},bb){
+				dispatch('aaa')
+				commit('login',bb)
+			}
+		},
+		getters:{
+			/*
+				需要用到 state 中派生的一些状态时，可使用
+			*/
+			ggg(state){
+				return state.count + 2
+			},
+			gbc(state,getters){
+				return getters.ggg + 2
+			},
+			garr:(state) => (id) => {
+				return state.userId == id
+			}
+		}
 		plugins:[vuexPersisted]
 	})
 	export default store
@@ -46,12 +78,20 @@
 	})
 
 在页面中使用
-	import { mapState,mapMutations } from 'vuex'
+	方法一：
+	import { mapState,mapMutations,mapActions,mapGetters } from 'vuex'
 
-	computed:mapState(['aa']) //使用存储的变量
-	methods:{...mapMutations(['bc'])} //使用mutations的方法
+	computed:{...mapState(['aa']),...mapGetters(['gbc','garr'])} //使用存储的变量
+	methods:{...mapMutations(['bc']),...mapActions(['aaa'])} //使用mutations的方法
 
-	this.aa   this.bc()
+	this.aa   this.bc(10)  this.aaa()  this.gbc  this.garr(2)
+
+	方法二：
+		this.$store.state.aa
+		this.$store.commit("bc",10)
+		this.$store.dispatch('aaa')
+		this.$store.getters.gbc
+		thsi.$store.getters.garr(2)
 
 将mapState和mapMutaions全局混入（不用每个页面都引入mapState和mapMutaions）
 
