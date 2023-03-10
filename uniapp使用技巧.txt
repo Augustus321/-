@@ -804,4 +804,22 @@ JPush极光消息推送
 	在APP.vue中，先创建常量 const jpushModule = uni.requireNativePlugin("JG-JPush") ；并在 onLaunch 中，初始化 jpushModule.initJPushService()
 	（具体使用方法查看 demo 文件夹中的“极光JPush官方SDK示例”）
 	（要想关闭应用后也能收到消息，需要配置各大厂商信息）
+	（需要推送配置证书用于配置后台，打包证书用于打包）
+
+判断是终端是ios、android、小程序
+	uni.getSystemInfoSync().platform
+	// android ios 其他则为小程序
+
+禁止App横屏
+	在App.vue的onLaunch中：
+	plus.screen.lockOrientation("portrait-primary")
+
+获取appid
+	plus.runtime.appid
+
+获取应用版本号
+	//第一个参数是appid，第二个是回调
+	plus.runtime.getProperty(plus.runtime.appid, (res) => {
+   		console.log(res); 
+  	})
 
