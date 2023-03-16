@@ -805,6 +805,7 @@ JPush极光消息推送
 	（具体使用方法查看 demo 文件夹中的“极光JPush官方SDK示例”）
 	（要想关闭应用后也能收到消息，需要配置各大厂商信息）
 	（需要推送配置证书用于配置后台，打包证书用于打包）
+	（安卓获取不了角标，只能直接清零，具体看官方文档）
 
 判断是终端是ios、android、小程序
 	uni.getSystemInfoSync().platform
@@ -822,4 +823,84 @@ JPush极光消息推送
 	plus.runtime.getProperty(plus.runtime.appid, (res) => {
    		console.log(res); 
   	})
+
+设置角标
+	//Android ROM的碎片化，导致此API在Android平台效果并不理想
+	plus.runtime.setBadgeNumber(0)
+
+判断是否开启通知权限
+	getNotificationStatus() {
+		// #ifdef APP-PLUS
+		let osName = plus.os.name.toLowerCase();
+		if(osName == 'ios'){
+			let UIApplication = plus.ios.import("UIApplication");
+			let app = UIApplication.sharedApplication();
+			let enabledTypes = 0;
+			if (app.currentUserNotificationSettings) {
+				let settings = app.currentUserNotificationSettings();
+				enabledTypes = settings.plusGetAttribute("types");
+			} else {
+				//针对低版本ios系统  
+				enabledTypes = app.enabledRemoteNotificationTypes();
+			}
+			plus.ios.deleteObject(app);
+			if (0 == enabledTypes) {
+				// 未开启通知
+				uni.showModal({
+					title: '提示',
+					content: '开启通知权限后才能收到提示消息哦',
+					confirmText:'去开启',
+					cancelText:'关闭',
+					success: function (res) {
+						if (res.confirm) {
+							var Intent = plus.android.importClass('android.content.Intent');
+							var Build = plus.android.importClass('android.os.Build');
+							//android 8.0引导
+							if (Build.VERSION.SDK_INT >= 26) {
+								var intent = new Intent('android.settings.APP_NOTIFICATION_SETTINGS');
+								intent.putExtra('android.provider.extra.APP_PACKAGE', pkName);
+							} else if (Build.VERSION.SDK_INT >= 21) {
+								//android 5.0-7.0
+								var intent = new Intent('android.settings.APP_NOTIFICATION_SETTINGS');
+								intent.putExtra('app_package', pkName);
+								intent.putExtra('app_uid', uid);
+							} else {
+								//(<21)其他--跳转到该应用管理的详情页
+								intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+								var uri = Uri.fromParts('package', mainActivity.getPackageName(), null);
+								intent.setData(uri);
+							}
+							// 跳转到该应用的系统通知设置页
+							main.startActivity(intent);
+						}
+					}
+				})
+			}
+		}else if(osName == 'android'){
+			let main = plus.android.runtimeMainActivity();
+			let NotificationManagerCompat = plus.android.importClass("androidx.core.app.NotificationManagerCompat");
+			let pkName = main.getPackageName();
+			let packageNames = NotificationManagerCompat.from(main);
+			let notificationEnabled = packageNames.areNotificationsEnabled();
+			if(!notificationEnabled){
+				// 未开启通知
+				uni.showModal({
+					title: '提示',
+					content: '开启通知权限后才能收到提示消息哦',
+					confirmText:'去开启',
+					cancelText:'关闭',
+					success: function (res) {
+						if (res.confirm) {
+							var app = plus.ios.invoke('UIApplication', 'sharedApplication');
+							var setting = plus.ios.invoke('NSURL', 'URLWithString:', 'app-settings:');
+							plus.ios.invoke(app, 'openURL:', setting);
+							plus.ios.deleteObject(setting);
+							plus.ios.deleteObject(app);
+						}
+					}
+				})
+			}
+		}
+		// #endif
+	}
 
