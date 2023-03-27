@@ -1,0 +1,200 @@
+在 components 中新建 updateApp
+	<template>
+	<view class="updateapp">
+		<view class="updateapp-box">
+			<view class="updateapp-title">
+				<text class="updateapp-text">检测更新</text>
+				<text class="updateapp-version">V{{versionData.version}}</text>
+			</view>
+			<view class="updateapp-content">
+				<view class="updateapp-label">发现新版本，请点击下方按钮更新</view>
+				<!-- <view class="updateapp-info">
+					1.asdfasdfsdfasdf
+					2.wqeqwerqwerwr
+					3.sdasdfasfsdf
+				</view> -->
+			</view>
+			<view class="updateapp-btn" @click="downloadApp" v-show="!showPro">立即更新</view>
+			<view class="updateapp-progress" v-show="showPro">
+				<u-line-progress :percentage="proUpdate.progress" activeColor="#50aa87" height="30"></u-line-progress>
+				<view class="updateapp-progress-text">
+					<view>安装包下载中，请稍后…</view>
+					<view>（{{proUpdate.totalBytesWritten}}/{{proUpdate.totalBytesExpectedToWrite}}M）</view>
+				</view>
+			</view>
+		</view>
+	</view>
+	</template>
+
+	<script>
+		export default {
+			name: "updateApp",
+			props: {
+				versionData: Object
+			},
+			data() {
+				return {
+					// 下载进度
+					proUpdate:{},
+					// 显示进度
+					showPro:false
+				}
+			},
+			methods: {
+				downloadApp() {
+					// 获取下载链接
+					const appDownUrl = this.versionData.down
+					// 判断手机是 android 还是 ios
+					let platform = uni.getSystemInfoSync().platform
+					if (platform == 'android'){
+						// 显示下载进度
+						this.showPro = true
+						// android 直接下载包并安装
+						let downloadTask =  uni.downloadFile({
+							url: appDownUrl,
+							success: fileResult => {
+								// 安装，第一个参数安装包的路径，第二个无视版本号强制更新，第三个更新成功的回调
+								plus.runtime.install(
+									fileResult.tempFilePath, {
+										force: true
+									},
+									function() {
+										uni.showLoading({
+											title: '更新成功，重启中...',
+											mask: true
+										})
+										plus.runtime.restart();
+									}
+								)
+							},
+							fail: err => {
+								uni.showToast({
+									title: '下载失败，请检查你的网络情况！',
+									icon: 'none'
+								})
+							}
+						})
+						// 监听下载进度，需要用一个变量来赋值
+						downloadTask.onProgressUpdate((res) => {
+							let proUpdate = res
+							//将已下载量和总下载量改为以 m 为单位
+							proUpdate.totalBytesWritten = (Number(proUpdate.totalBytesWritten / 1024 / 1024)).toFixed(2)
+							proUpdate.totalBytesExpectedToWrite = (Number(proUpdate.totalBytesExpectedToWrite / 1024 /1024)).toFixed(2)
+							this.proUpdate = proUpdate
+						})
+					}else if (platform == 'ios') {
+						// 跳转 ios 的 AppStore
+						let appleId= 111111111
+                                    				plus.runtime.launchApplication({
+                                        					action: `itms-apps://itunes.apple.com/cn/app/id${appleId}?mt=8`
+                                    				}, function(e) {
+                                        					console.log('Open system default browser failed: ' + e.message);
+                                    				})
+					}
+				}
+			}
+		}
+	</script>
+
+	<style lang="scss">
+	.updateapp {
+		width: 100%;
+		height: 100vh;
+		background-color: rgba(0, 0, 0, 0.6);
+		position: fixed;
+		top: 0;
+		left: 0;
+		z-index: 999;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+
+		.updateapp-box {
+			width: 600rpx;
+			background-color: #ffffff;
+			padding-bottom: 40rpx;
+			border-radius: 20rpx;
+
+			.updateapp-title {
+				border-top-left-radius: 20rpx;
+				border-top-right-radius: 20rpx;
+				height: 100rpx;
+				background-image: linear-gradient(to bottom right, $theme, rgb(61, 131, 103));
+				color: #ffffff;
+				line-height: 100rpx;
+				padding-left: 40rpx;
+
+				.updateapp-text {
+					font-size: 45rpx;
+					margin-right: 15rpx;
+				}
+
+				.updateapp-version {
+					font-size: 28rpx;
+				}
+			}
+
+			.updateapp-content {
+				padding: 50rpx 40rpx;
+
+				.updateapp-label {
+					margin-bottom: 10rpx;
+				}
+			}
+
+			.updateapp-btn {
+				width: 70%;
+				height: 80rpx;
+				border-radius: 80rpx;
+				background-color: $theme;
+				margin: auto;
+				box-shadow: 1px 1px 4px 0px rgba(0, 0, 0, 0.2);
+				text-align: center;
+				font-size: 35rpx;
+				color: #ffffff;
+				line-height: 80rpx;
+			}
+
+			.updateapp-progress {
+				padding: 0 40rpx;
+
+				::v-deep .u-line-progress {
+					.u-line-progress__text {
+						font-size: 28rpx;
+					}
+				}
+
+				.updateapp-progress-text {
+					margin-top: 10rpx;
+					font-size: 28rpx;
+				}
+			}
+		}
+	}
+	</style>
+
+在index中
+	template：
+		<!-- 检测更新 -->
+		<update-app v-show="showVersion" :versionData="versionData"></update-app>
+		//记得引入组件
+	onLoad：
+		// #ifdef APP-PLUS
+		// 版本控制更新
+		let platform = uni.getSystemInfoSync().platform
+		this.$request(`/api/version?plat=api&device=${platform}`).then(res => {
+			this.versionData = res
+			let currentAppVersion = null
+			plus.runtime.getProperty(plus.runtime.appid, (e) => {
+				//获取当前 app 的版本号
+				currentAppVersion = Number(e.versionCode)
+				// 比较版本号，如果返回的版本号比本地的大，则需要更新
+				if (res.version_code > currentAppVersion) {
+					this.showVersion = true
+					//不隐藏 tabbar 会在遮罩层的上面
+					uni.hideTabBar()
+				}
+			})
+		})
+		// #endif
+
