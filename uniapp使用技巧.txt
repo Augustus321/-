@@ -916,3 +916,41 @@ uniapp上架安卓的应用市场需要使用uniapp的原生隐私政策提示框
 	
 	//需要关闭或打开“游客模式”只需将 visitorEntry 字段设为 ture(打开) 或者 false(关闭)
 
+uniapp的ios第一次安装出现没有数据的情况
+	//检测有无网络，如果有则直接请求，没有则开启网络监听（网络监听不能监听到初始化时的网络状态，只有当网络变化时才能监听，因此只里要先使用获取网络状态的方法）
+	uni.getNetworkType({
+		success: function (res) {
+			if(res.networkType != 'none'){
+				//有网络，可以请求
+				getIndex()
+			}else{
+				//没有网络，开启网络监听
+				// 网络监听的回调函数
+				const networkCallBack = (res) => {
+					if(res.isConnected){
+						//为真，表示网络开启了，可以请求
+						getIndex()
+						// 关闭网络监听
+						uni.offNetworkStatusChange(networkCallBack)
+					}else{
+						//用户关闭了网络
+						uni.showToast({
+							title:'请打开网络',
+							mask:true,
+							icon:'none',
+							duration:600
+						})
+					}
+				}
+				// 开始监听网络，只有当网络变化时才会走回调
+				uni.onNetworkStatusChange(networkCallBack)
+			}
+		}
+	})
+
+圆形倒计时
+	看 《uniapp组件》文件夹中的 roundCountDown
+	//页面使用，记得引入组件
+	<!-- roundData 传递的是父元素的信息，countDownTime是总时间，countDown是剩余时间 -->
+	<round-count-down :roundData="roundData" :countDownTime="orderData.service_end_time" :countDown="countDown"></round-count-down>
+	//countDown倒计时需要每隔一段时间更新一次，保证定时器的准确性
