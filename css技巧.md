@@ -334,3 +334,71 @@ filter: drop-shadow(3px 3px 3px rgba(0,0,0,.3));
 ##  24.z-index 知识
 
 当父元素的 z-index 比 父元素的兄弟元素低时，子元素的 z-index 无论多大，都会在父元素的兄弟元素的下方
+
+##  25.字体样式
+
+### 1.字型 font-family
+
+```css
+ font-family: "楷体", "宋体",serif;
+```
+
+注：1. 尽量多设置几个字体，以免浏览器不支持第一个字体。
+
+​		2. 名称超过一个字需要打引号。
+
+​		3. 多个字体用逗号隔开。
+
+### 2.字体样式 font-style（斜体）
+
+1. 正常样式 `font-size:normal;`
+2. 文本斜体 `font-size:italic;`
+3. 文本倾斜 `font-size:oblique;` 和斜体差不多，不常用
+
+### 3.字体大小 font-size
+
+使用方法：例：`font-size: 30px;`
+
+| 值                                                   | 效果                                                         |
+| ---------------------------------------------------- | ------------------------------------------------------------ |
+| xx-small/x-small/small/medium/large/x-large/xx-large | 把字体的尺寸设置成相对于父元素不同的尺寸，从xx-small到xx-large 默认值:medium。（具体效果自己试） |
+| smaller                                              | 把 font-size 设置为比父元素更小的尺寸                        |
+| larger                                               | 把 font-size 设置为比父元素更大的尺寸                        |
+| px/cm/pt/in/mm                                       | 把 font-size 设置为一个固定的尺寸                            |
+| %                                                    | 把 font-size 设置为基于父元素的一个百分比的大小              |
+| inherit                                              | 从父元素继承                                                 |
+| em                                                   | 1em和当前字体大小相等。在浏览器中默认的文字大小是16px。因此，1em的默认大小是16px。可以通过下面这个公式将像素转换为em：**px/16=em** |
+| rem                                                  | 1rem = 1HTML字号大小                                         |
+
+### 4.字体粗细 font-weight
+
+使用方法：例：`font-weight: bold;`
+
+| 值                                  | 效果                                                      |
+| ----------------------------------- | --------------------------------------------------------- |
+| normal                              | 默认值。定义标准的字符                                    |
+| bold                                | 定义粗体字符                                              |
+| bolder                              | 定义更粗的字符                                            |
+| lighter                             | 定义更细的字符                                            |
+| 100 200 300 400 500 600 700 800 900 | 定义由细到粗的字符。400 等同于 normal，而 700 等同于 bold |
+| inherit                             | 规定应该从父元素继承字体的粗细                            |
+
+### 5.小型大写字母字体 font-variant
+
+设置小型大写字母的字体显示文本，这意味着所有的小写字母均会被转换为大写，但是所有使用小型大写字体的字母与其余文本相比，其字体尺寸更小
+
+1. 正常显示 `font-variant: normal;`
+2. 显示小型大写字母 `font-variant: small-caps;`
+3. 继承父元素的值 `font-variant: inherit;`
+
+### 6.复合属性 font（将所有属性合在一起）
+
+使用方法：`font:style weight size family;`（必须执照顺序写，但前两个可以省略，省略的话相当于前两个为默认值）
+
+例：`font: italic bold 20px "宋体";`
+
+## 26.文字阴影
+
+使用方法：`text-shadow: X轴 Y轴 阴影模糊半径 阴影颜色;`
+
+例：`text-shadow:2px 3px 1px pink;`

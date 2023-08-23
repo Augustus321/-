@@ -569,3 +569,14 @@ function currTimeFormate() {
 }
 ```
 
+##  35.比较时间大小
+
+```js
+const nowTime = new Date(),oldTime = new Date('2022-6-13 8:23')
+if(nowTime.getTime() > oldTime.getTime()){
+    console.log('当前时间比以前的时间大')
+}else{
+   console.log('当前时间比以前的时间小')
+}
+```
+

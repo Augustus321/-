@@ -7,4 +7,3 @@ getPhoneNumber的e.detail出现的问题
 
 Error: 系统错误，错误码：80058,desc of scope.userLocation is empty
 	uniapp中设置了位置接口
-
